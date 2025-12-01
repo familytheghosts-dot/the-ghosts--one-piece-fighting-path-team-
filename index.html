@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Piece Fighting Path</title>
+
+    <!-- تحسينات SEO -->
+    <meta name="description" content="One Piece Fighting Path - مجتمع عشاق ون بيس وألعاب القتال">
+    <meta name="keywords" content="ون بيس, One Piece, لعبة قتال, أنمي">
+    <meta property="og:title" content="One Piece Fighting Path">
+    <meta property="og:description" content="انضم إلى مجتمع عشاق ون بيس">
+    <meta property="og:image" content="images/logo.webp">
+
+    <!-- Preload للصور المهمة -->
+    <link rel="preload" href="images/logo.png" as="image">
+    <link rel="preload" href="images/wood-texture.webp" as="image">
+
+    <style>
+        :root {
+            /* CSS Variables */
+            --capsule-width: 85%;
+            --capsule-max-width: 380px;
+            --capsule-height: 75px;
+            --header-height: 60px;
+            --slide-width: 180px;
+            --slide-height: 330px;
+            --primary-color: #f5a623;
+            --secondary-color: #f7c948;
+            --text-color: white;
+            --shadow: 0px 4px 10px rgba(0,0,0,0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ======== زر الترجمة ======== */
+        .translate-btn {
+            position: fixed;
+            top: 18px;
+            right: 15px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .translate-btn:hover {
+            background: #b71c1c;
+            transform: scale(1.1);
+        }
+
+        .translate-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ======== الخلفية المتحركة مع الأمواج ======== */
+        body {
+            margin: 0;
+            padding: 0;
+            background:
+                /* تدرج البحر العميق */
+                linear-gradient(160deg, #0a1128 0%, #1a3a6a 30%, #2a5a8c 60%, #3c6ba1 100%);
+            min-height: 100vh;
+            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* طبقة الأمواج الرئيسية - أكثر وضوحاً */
+        .ocean-waves {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 400%;
+            height: 200px;
+            background:
+                linear-gradient(transparent, rgba(255, 255, 255, 0.3)),
+                linear-gradient(transparent, rgba(173, 216, 230, 0.4));
+            border-radius: 50% 50% 0 0;
+            animation: oceanWaves 20s ease-in-out infinite;
+            transform-origin: bottom;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        /* الموجة الثانية - أكثر وضوحاً */
+        .ocean-waves::before {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: -50%;
+            width: 300%;
+            height: 150px;
+            background:
+                linear-gradient(transparent, rgba(255, 255, 255, 0.25)),
+                linear-gradient(transparent, rgba(135, 206, 235, 0.35));
+            border-radius: 50% 50% 0 0;
+            animation: oceanWaves 15s ease-in-out infinite reverse;
+            opacity: 0.7;
+        }
+
+        /* الموجة الثالثة - أكثر وضوحاً */
+        .ocean-waves::after {
+            content: '';
+            position: absolute;
+            bottom: 20px;
+            left: -100%;
+            width: 400%;
+            height: 120px;
+            background:
+                linear-gradient(transparent, rgba(255, 255, 255, 0.2)),
+                linear-gradient(transparent, rgba(100, 149, 237, 0.3));
+            border-radius: 50% 50% 0 0;
+            animation: oceanWaves 25s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes oceanWaves {
+            0% {
+                transform: translateX(0) scaleY(1) rotate(0deg);
+            }
+            25% {
+                transform: translateX(-10%) scaleY(1.2) rotate(0.8deg);
+            }
+            50% {
+                transform: translateX(-20%) scaleY(1.1) rotate(-0.8deg);
+            }
+            75% {
+                transform: translateX(-10%) scaleY(1.2) rotate(0.8deg);
+            }
+            100% {
+                transform: translateX(0) scaleY(1) rotate(0deg);
+            }
+        }
+
+        /* تأثير الفقاعات - أكثر وضوحاً وعدداً */
+        .bubbles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            animation: bubbleRise linear infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* 30 فقاعة بدلاً من 9 - أكثر وضوحاً */
+        .bubble:nth-child(1) { left: 5%; width: 12px; height: 12px; animation-duration: 6s; animation-delay: 0s; }
+        .bubble:nth-child(2) { left: 10%; width: 8px; height: 8px; animation-duration: 8s; animation-delay: 1s; }
+        .bubble:nth-child(3) { left: 15%; width: 15px; height: 15px; animation-duration: 7s; animation-delay: 2s; }
+        .bubble:nth-child(4) { left: 20%; width: 10px; height: 10px; animation-duration: 9s; animation-delay: 0.5s; }
+        .bubble:nth-child(5) { left: 25%; width: 13px; height: 13px; animation-duration: 6.5s; animation-delay: 1.5s; }
+        .bubble:nth-child(6) { left: 30%; width: 7px; height: 7px; animation-duration: 8.5s; animation-delay: 2.5s; }
+        .bubble:nth-child(7) { left: 35%; width: 11px; height: 11px; animation-duration: 7.5s; animation-delay: 0.8s; }
+        .bubble:nth-child(8) { left: 40%; width: 9px; height: 9px; animation-duration: 9.5s; animation-delay: 1.8s; }
+        .bubble:nth-child(9) { left: 45%; width: 14px; height: 14px; animation-duration: 6.8s; animation-delay: 2.8s; }
+        .bubble:nth-child(10) { left: 50%; width: 6px; height: 6px; animation-duration: 8.2s; animation-delay: 0.3s; }
+        .bubble:nth-child(11) { left: 55%; width: 12px; height: 12px; animation-duration: 7.2s; animation-delay: 1.3s; }
+        .bubble:nth-child(12) { left: 60%; width: 8px; height: 8px; animation-duration: 9.2s; animation-delay: 2.3s; }
+        .bubble:nth-child(13) { left: 65%; width: 16px; height: 16px; animation-duration: 6.2s; animation-delay: 0.7s; }
+        .bubble:nth-child(14) { left: 70%; width: 10px; height: 10px; animation-duration: 8.7s; animation-delay: 1.7s; }
+        .bubble:nth-child(15) { left: 75%; width: 13px; height: 13px; animation-duration: 7.8s; animation-delay: 2.7s; }
+        .bubble:nth-child(16) { left: 80%; width: 7px; height: 7px; animation-duration: 9.8s; animation-delay: 0.4s; }
+        .bubble:nth-child(17) { left: 85%; width: 11px; height: 11px; animation-duration: 6.9s; animation-delay: 1.4s; }
+        .bubble:nth-child(18) { left: 90%; width: 9px; height: 9px; animation-duration: 8.9s; animation-delay: 2.4s; }
+        .bubble:nth-child(19) { left: 95%; width: 14px; height: 14px; animation-duration: 7.1s; animation-delay: 0.9s; }
+        .bubble:nth-child(20) { left: 3%; width: 10px; height: 10px; animation-duration: 8.1s; animation-delay: 1.9s; }
+        .bubble:nth-child(21) { left: 8%; width: 12px; height: 12px; animation-duration: 7.3s; animation-delay: 2.9s; }
+        .bubble:nth-child(22) { left: 13%; width: 8px; height: 8px; animation-duration: 9.1s; animation-delay: 0.6s; }
+        .bubble:nth-child(23) { left: 18%; width: 15px; height: 15px; animation-duration: 6.7s; animation-delay: 1.6s; }
+        .bubble:nth-child(24) { left: 23%; width: 10px; height: 10px; animation-duration: 8.3s; animation-delay: 2.6s; }
+        .bubble:nth-child(25) { left: 28%; width: 13px; height: 13px; animation-duration: 7.4s; animation-delay: 0.2s; }
+        .bubble:nth-child(26) { left: 33%; width: 7px; height: 7px; animation-duration: 9.3s; animation-delay: 1.2s; }
+        .bubble:nth-child(27) { left: 38%; width: 11px; height: 11px; animation-duration: 6.4s; animation-delay: 2.2s; }
+        .bubble:nth-child(28) { left: 43%; width: 9px; height: 9px; animation-duration: 8.4s; animation-delay: 0.8s; }
+        .bubble:nth-child(29) { left: 48%; width: 14px; height: 14px; animation-duration: 7.6s; animation-delay: 1.8s; }
+        .bubble:nth-child(30) { left: 53%; width: 6px; height: 6px; animation-duration: 9.4s; animation-delay: 2.8s; }
+
+        @keyframes bubbleRise {
+            0% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateY(-50vh) translateX(15px) scale(1.3);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(-15px) scale(0.9);
+                opacity: 0;
+            }
+        }
+
+        /* ======== HEADER ثابت مع صورة خشب واقعية ======== */
+        header {
+            /* صورة خشب واقعية */
+            background:
+                url('images/wood-texture.webp') center/cover,
+                /* طبقة تلوين لتحسين التباين */
+                linear-gradient(to bottom, rgba(139, 69, 19, 0.7), rgba(93, 64, 55, 0.8));
+            background-blend-mode: overlay;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 9999;
+            height: var(--header-height);
+            box-shadow:
+                0 2px 10px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                /* تأثيرات عمق للخشب */
+                inset 0 0 20px rgba(0,0,0,0.4),
+                inset 0 -5px 15px rgba(0,0,0,0.3);
+            border-bottom: 3px solid #5D4037;
+        }
+
+        .title {
+            color: #FFF8E1;
+            font-weight: bold;
+            font-size: 22px;
+            white-space: nowrap;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        }
+
+        .title small {
+            font-size: 14px;
+            font-weight: normal;
+            color: #FFD54F;
+        }
+
+        .content {
+            padding-top: calc(var(--header-height) + 10px);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            padding-bottom: 30px; /* مساحة إضافية في الأسفل */
+        }
+
+        /* ======== صور أعلى الصفحة ======== */
+        .logo {
+            width: 70%;
+            max-width: 330px;
+            display: block;
+            margin: 10px auto 0 auto;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 2;
+        }
+
+        .slogan {
+            width: 85%;
+            max-width: 380px;
+            display: block;
+            margin: -100px auto 0 auto;
+            border-radius: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ======== كبسولات ======== */
+        .image-capsule {
+            width: var(--capsule-width);
+            max-width: var(--capsule-max-width);
+            height: var(--capsule-height);
+            border-radius: 40px;
+            margin: -100px auto 0 auto;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow);
+            border: none;
+            background: transparent;
+            display: block;
+            z-index: 2;
+        }
+
+        .image-capsule:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        .image-capsule:active {
+            transform: scale(0.98);
+        }
+
+        .image-capsule:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        .image-capsule img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .capsule-text {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: black;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 2;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
+        }
+
+        /* ======== السلايدر ======== */
+        .slider-container {
+            width: 100%;
+            overflow: hidden;
+            margin-top: 25px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .slider-container::before,
+        .slider-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 60px;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .slider-container::before {
+            left: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.3), transparent);
+        }
+
+        .slider-container::after {
+            right: 0;
+            background: linear-gradient(to left, rgba(0,0,0,0.3), transparent);
+        }
+
+        .slider-track {
+            display: flex;
+            width: calc(var(--slide-width) * 40);
+            animation: scroll 60s linear infinite;
+            animation-play-state: running;
+        }
+
+        /* إيقاف السلايدر عند اللمس */
+        .slider-track:hover,
+        .slider-track:active {
+            animation-play-state: paused;
+        }
+
+        .slide {
+            width: var(--slide-width);
+            margin: 0 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .slide:hover {
+            transform: scale(1.05);
+        }
+
+        .slide img {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .slide:hover img {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .slide-text {
+            margin-top: 5px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            text-shadow: 0 0 5px black, 0 0 10px black;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.5);
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ======== مستطيل تلغرام ======== */
+        .telegram-container {
+            width: 100;
+            height: 60px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.15); /* شفافية من الداخل */
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            margin: 20px auto 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .telegram-container:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .telegram-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+        }
+
+        /* ======== تحسينات للشاشات الصغيرة ======== */
+        @media (max-width: 768px) {
+            :root {
+                --slide-width: 150px;
+                --slide-height: 280px;
+            }
+
+            .slider-track {
+                width: calc(166px * 40);
+            }
+
+            .title {
+                font-size: 18px;
+            }
+
+            .title small {
+                font-size: 12px;
+            }
+
+            .capsule-text {
+                font-size: 18px;
+            }
+
+            .ocean-waves {
+                height: 150px;
+            }
+
+            .ocean-waves::before {
+                height: 120px;
+            }
+
+            .ocean-waves::after {
+                height: 100px;
+            }
+
+            .telegram-container {
+                height: 55px;
+            }
+
+            .telegram-link {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --slide-width: 130px;
+                --slide-height: 240px;
+                --header-height: 50px;
+            }
+
+            header {
+                padding: 8px 10px;
+            }
+
+            .title {
+                font-size: 16px;
+                white-space: normal;
+                text-align: center;
+                width: 100%;
+            }
+
+            .content {
+                padding-top: calc(var(--header-height) + 5px);
+            }
+
+            .logo {
+                margin-top: 5px;
+            }
+
+            .slogan {
+                margin-top: -80px;
+            }
+
+            .image-capsule {
+                margin-top: -80px;
+            }
+
+            .capsule-text {
+                font-size: 16px;
+                left: 15px;
+            }
+
+            .slider-container::before,
+            .slider-container::after {
+                width: 30px;
+            }
+
+            .ocean-waves {
+                height: 120px;
+            }
+
+            .ocean-waves::before {
+                height: 100px;
+            }
+
+            .ocean-waves::after {
+                height: 80px;
+            }
+
+            .telegram-container {
+                height: 50px;
+            }
+
+            .telegram-link {
+                font-size: 15px;
+            }
+        }
+
+        /* تحسينات للشاشات الكبيرة جداً */
+        @media (min-width: 1200px) {
+            .logo {
+                max-width: 400px;
+            }
+
+            .slogan {
+                max-width: 450px;
+            }
+        }
+
+        /* تحسينات للوضع الأفقي على الموبايل */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .content {
+                padding-top: var(--header-height);
+            }
+
+            .logo, .slogan {
+                display: inline-block;
+                width: 40%;
+                vertical-align: top;
+                margin-top: 10px;
+            }
+
+            .logo {
+                margin-right: 5%;
+            }
+
+            .slogan {
+                margin-left: 5%;
+            }
+
+            .image-capsule {
+                width: 90%;
+                margin-top: 10px;
+            }
+
+            .ocean-waves {
+                height: 100px;
+            }
+
+            .telegram-container {
+                height: 45px;
+            }
+        }
+
+        /* تحسينات لإمكانية الوصول */
+        @media (prefers-reduced-motion: reduce) {
+            .slider-track {
+                animation: none;
+            }
+
+            .image-capsule,
+            .slide {
+                transition: none;
+            }
+
+            .ocean-waves,
+            .bubble {
+                animation: none;
+                display: none;
+            }
+
+            .telegram-container {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- زر الترجمة -->
+<button class="translate-btn" id="translateBtn" title="ترجمة إلى الصينية">中</button>
+
+<!-- الأمواج المتحركة في الخلفية -->
+<div class="ocean-waves"></div>
+
+<!-- الفقاعات المتحركة - 30 فقاعة بدلاً من 9 -->
+<div class="bubbles">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+</div>
+
+<header>
+    <div class="title">
+        one piece <small>fighting</small> <small>path</small>
+    </div>
+</header>
+
+<div class="content">
+
+    <img src="images/logo.png" class="logo" alt="شعار One Piece Fighting Path" loading="eager">
+    <img src="images/dfk.png" class="slogan" alt="شعار الموقع" loading="lazy">
+
+    <!-- كبسولة 1 -->
+    <button class="image-capsule" aria-label="عرض قائمة الأعضاء">
+        <img src="images/photo3.webp" alt="خلفية قسم الأعضاء">
+        <span class="capsule-text">Members</span>
+    </button>
+
+    <!-- السلايدر -->
+    <div class="slider-container">
+        <div class="slider-track" id="sliderTrack">
+            <!-- group 1 -->
+            <div class="slide"><img src="images/Member1.webp" loading="lazy" alt="عضو ياسر"><div class="slide-text">yassir (boss)</div></div>
+            <div class="slide"><img src="images/Member2.webp" loading="lazy" alt="عضو محسن (مشرف)"><div class="slide-text">mohsen (adm)</div></div>
+            <div class="slide"><img src="images/Member3.webp" loading="lazy" alt="عضو venomx (مشرف)"><div class="slide-text">venomx(adm)</div></div>
+            <div class="slide"><img src="images/Member4.webp" loading="lazy" alt="عضو rudo (مشرف)"><div class="slide-text">rudo(adm)</div></div>
+            <div class="slide"><img src="images/Member5.webp" loading="lazy" alt="عضو white (مشرف)"><div class="slide-text">white(adm)</div></div>
+            <div class="slide"><img src="images/Member6.webp" loading="lazy" alt="عضو tamim (مشرف)"><div class="slide-text">tamim(adm)</div></div>
+            <div class="slide"><img src="images/Member7.webp" loading="lazy" alt="عضو"><div class="slide-text">Duffy (adm)</div></div>
+            <div class="slide"><img src="images/Member8.webp" loading="lazy" alt="عضو"><div class="slide-text">Mahmoud (adm)</div></div>
+            <div class="slide"><img src="images/Member9.webp" loading="lazy" alt="عضو"><div class="slide-text">MuhammadD (adm)</div></div>
+            <div class="slide"><img src="images/Member10.webp" loading="lazy" alt="عضو"><div class="slide-text">Ayoub troy</div></div>
+            <div class="slide"><img src="images/Member11.webp" loading="lazy" alt="عضو"><div class="slide-text">Adam</div></div>
+            <div class="slide"><img src="images/Member12.webp" loading="lazy" alt="عضو"><div class="slide-text">Imad</div></div>
+            <div class="slide"><img src="images/Member13.webp" loading="lazy" alt="عضو"><div class="slide-text">Malik</div></div>
+            <div class="slide"><img src="images/Member14.webp" loading="lazy" alt="عضو"><div class="slide-text">Rahim</div></div>
+            <div class="slide"><img src="images/Member15.webp" loading="lazy" alt="عضو"><div class="slide-text">Nazim</div></div>
+            <div class="slide"><img src="images/Member16.webp" loading="lazy" alt="عضو"><div class="slide-text">الغريب</div></div>
+            <div class="slide"><img src="images/Member17.webp" loading="lazy" alt="عضو"><div class="slide-text">SW</div></div>
+            <div class="slide"><img src="images/Member18.webp" loading="lazy" alt="عضو"><div class="slide-text">Garp</div></div>
+            <div class="slide"><img src="images/Member19.webp" loading="lazy" alt="عضو"><div class="slide-text">king</div></div>
+            <div class="slide"><img src="images/Member20.webp" loading="lazy" alt="عضو"><div class="slide-text">مؤمن</div></div>
+
+            <!-- group 2 duplicate -->
+            <div class="slide"><img src="images/Member1.webp" loading="lazy" alt="عضو ياسر"><div class="slide-text">yassir</div></div>
+            <div class="slide"><img src="images/Member2.webp" loading="lazy" alt="عضو محسن (مشرف)"><div class="slide-text">mohsen (adm)</div></div>
+            <div class="slide"><img src="images/Member3.webp" loading="lazy" alt="عضو venomx (مشرف)"><div class="slide-text">venomx(adm)</div></div>
+            <div class="slide"><img src="images/Member4.webp" loading="lazy" alt="عضو rudo (مشرف)"><div class="slide-text">rudo(adm)</div></div>
+            <div class="slide"><img src="images/Member5.webp" loading="lazy" alt="عضو white (مشرف)"><div class="slide-text">white(adm)</div></div>
+            <div class="slide"><img src="images/Member6.webp" loading="lazy" alt="عضو tamim (مشرف)"><div class="slide-text">tamim(adm)</div></div>
+            <div class="slide"><img src="images/Member7.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 7</div></div>
+            <div class="slide"><img src="images/Member8.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 8</div></div>
+            <div class="slide"><img src="images/Member9.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 9</div></div>
+            <div class="slide"><img src="images/Member10.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 10</div></div>
+            <div class="slide"><img src="images/Member11.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 11</div></div>
+            <div class="slide"><img src="images/Member12.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 12</div></div>
+            <div class="slide"><img src="images/Member13.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 13</div></div>
+            <div class="slide"><img src="images/Member14.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 14</div></div>
+            <div class="slide"><img src="images/Member15.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 15</div></div>
+            <div class="slide"><img src="images/Member16.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 16</div></div>
+            <div class="slide"><img src="images/Member17.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 17</div></div>
+            <div class="slide"><img src="images/Member18.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 18</div></div>
+            <div class="slide"><img src="images/Member19.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 19</div></div>
+            <div class="slide"><img src="images/Member20.webp" loading="lazy" alt="عضو"><div class="slide-text">TEXT 20</div></div>
+        </div>
+    </div>
+
+    <!-- كبسولة 2 -->
+    <button class="image-capsule" style="margin-top: 40px;" onclick="window.location.href='championship.html'" aria-label="الانتقال إلى صفحة البطولة">
+        <img src="images/photo4.webp" alt="خلفية قسم البطولة">
+        <span class="capsule-text">Championship</span>
+    </button>
+
+    <!-- كبسولة 3 -->
+    <button class="image-capsule" style="margin-top: 20px;" aria-label="عرض صفحة الإتقان">
+        <img src="images/photo5.webp" alt="خلفية قسم الإتقان">
+        <span class="capsule-text">Mastery</span>
+    </button>
+
+    <!-- مستطيل تلغرام -->
+    <div class="telegram-container">
+        <a href="https://t.me/your_telegram_link" class="telegram-link" target="_blank">télégramme</a>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const capsules = document.querySelectorAll('.image-capsule');
+        const sliderTrack = document.getElementById('sliderTrack');
+        const translateBtn = document.getElementById('translateBtn');
+        let isSliderPaused = false;
+        let isTranslated = false;
+
+        // تأثير النقر على الكبسولات
+        capsules.forEach(capsule => {
+            capsule.addEventListener('click', function(e) {
+                // تأثير النقر
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+
+                // إذا كانت الكبسولة لها رابط، ننتقل إليه
+                if (this.onclick) {
+                    return;
+                }
+
+                const text = this.querySelector('.capsule-text').textContent;
+                console.log(`تم النقر على: ${text}`);
+            });
+        });
+
+        // التحكم في السلايدر
+        sliderTrack.addEventListener('click', function() {
+            isSliderPaused = !isSliderPaused;
+            this.style.animationPlayState = isSliderPaused ? 'paused' : 'running';
+        });
+
+        // إضافة تأثير عند التمرير على العناصر
+        const slides = document.querySelectorAll('.slide');
+        slides.forEach(slide => {
+            slide.addEventListener('mouseenter', function() {
+                if (!isSliderPaused) {
+                    sliderTrack.style.animationPlayState = 'paused';
+                }
+            });
+
+            slide.addEventListener('mouseleave', function() {
+                if (!isSliderPaused) {
+                    sliderTrack.style.animationPlayState = 'running';
+                }
+            });
+        });
+
+        // تحسين إمكانية الوصول للوحة المفاتيح
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isSliderPaused) {
+                isSliderPaused = false;
+                sliderTrack.style.animationPlayState = 'running';
+            }
+        });
+
+        // وظيفة الترجمة
+        translateBtn.addEventListener('click', function() {
+            const capsuleTexts = document.querySelectorAll('.capsule-text');
+            const telegramLink = document.querySelector('.telegram-link');
+
+            if (!isTranslated) {
+                // ترجمة النصوص إلى الصينية
+                capsuleTexts.forEach(text => {
+                    const originalText = text.textContent;
+
+                    switch(originalText) {
+                        case 'Members':
+                            text.textContent = '成员';
+                            break;
+                        case 'Championship':
+                            text.textContent = '锦标赛';
+                            break;
+                        case 'Mastery':
+                            text.textContent = '精通';
+                            break;
+                        default:
+                            // النصوص الأخرى تبقى كما هي
+                            break;
+                    }
+                });
+
+                // ترجمة نص تلغرام
+                telegramLink.textContent = '电报';
+
+                isTranslated = true;
+                translateBtn.textContent = 'ع';
+                translateBtn.title = "ترجمة إلى العربية";
+            } else {
+                // إعادة النصوص إلى حالتها الأصلية
+                capsuleTexts.forEach(text => {
+                    const translatedText = text.textContent;
+
+                    switch(translatedText) {
+                        case '成员':
+                            text.textContent = 'Members';
+                            break;
+                        case '锦标赛':
+                            text.textContent = 'Championship';
+                            break;
+                        case '精通':
+                            text.textContent = 'Mastery';
+                            break;
+                        default:
+                            // النصوص الأخرى تبقى كما هي
+                            break;
+                    }
+                });
+
+                // إعادة نص تلغرام
+                telegramLink.textContent = 'télégramme';
+
+                isTranslated = false;
+                translateBtn.textContent = '中';
+                translateBtn.title = "ترجمة إلى الصينية";
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
