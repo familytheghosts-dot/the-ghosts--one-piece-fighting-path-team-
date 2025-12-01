@@ -908,8 +908,9 @@ body {
 <div class="footer-box">
     <div class="footer-title" data-ar="لكل من يريد إنقاذ لوفي فليقم بالإنضمام لنا" data-zh="想要拯救路飞的人，请加入我们">For those who want to save Luffy, join us</div>
     <div class="footer-links">
-        <a href="https://t.me/your-telegram-link" class="footer-link" target="_blank" data-ar="تيليجرام" data-zh="Telegram">Telegram</a>
-        <a href="https://youtube.com/your-youtube-link" class="footer-link" target="_blank" data-ar="يوتيوب" data-zh="YouTube">YouTube</a>
+        <a href="https://t.me/theghostsOPFPchat" class="footer-link" target="_blank" data-ar="تيليجرام" data-zh="Telegram">Telegram</a>
+        <a href="https://youtube.com/@theghosts-ofpt?si=5hOJg9CpC6HBidZn" class="footer-link" target="_blank" data-ar="يوتيوب" data-zh="YouTube">YouTube</a>
+        <a href="https://t.me/theghostsOPF" class="footer-link" target="_blank" data-ar="تيليجرام" data-zh="Telegram">Telegram</a>
     </div>
 </div>
 
@@ -998,42 +999,86 @@ async function setupTokenSystem() {
     return false;
 }
 
-// ====== تحديث حالة المسؤول ======
+// ====== تحديث حالة المسؤول (بعد مربع الروابط) ======
 function updateAdminStatus(admin) {
     let statusElement = document.getElementById('adminStatus');
-    if (!statusElement) {
-        statusElement = document.createElement('div');
-        statusElement.id = 'adminStatus';
-        document.querySelector('header').appendChild(statusElement);
+
+    // إزالة أي عنصر قديم
+    if (statusElement) {
+        statusElement.remove();
+    }
+
+    // إنشاء العنصر الجديد
+    statusElement = document.createElement('div');
+    statusElement.id = 'adminStatus';
+
+    // إضافة العنصر بعد الفوتر مباشرة
+    const footerBox = document.querySelector('.footer-box');
+    if (footerBox) {
+        // إضافة مربع المسؤول بعد مربع الروابط
+        footerBox.parentNode.insertBefore(statusElement, footerBox.nextSibling);
+    } else {
+        // إذا لم يكن هناك فوتر، نضيفه في نهاية body
+        document.body.appendChild(statusElement);
     }
 
     if (admin) {
-        statusElement.innerHTML = '✅ وضع المسؤول - يمكنك تحديد الفائزين';
-        statusElement.style.cssText = `
-            text-align: center;
-            padding: 12px 20px;
-            margin: 15px auto;
-            background: rgba(0, 200, 0, 0.2);
-            border: 2px solid #00ff00;
-            color: #00ff00;
-            border-radius: 10px;
-            max-width: 500px;
-            font-weight: bold;
-            font-size: 16px;
+        statusElement.innerHTML = `
+            <div style="text-align: center; margin: 40px auto 60px;">
+                <div style="
+                    display: inline-block;
+                    padding: 18px 35px;
+                    background: linear-gradient(135deg, rgba(0, 100, 0, 0.2), rgba(0, 50, 0, 0.3));
+                    border: 2px solid #00ff00;
+                    color: #00ff00;
+                    border-radius: 12px;
+                    font-weight: bold;
+                    font-size: 17px;
+                    text-align: center;
+                    box-shadow: 0 0 30px rgba(0, 255, 0, 0.25),
+                                inset 0 0 20px rgba(0, 255, 0, 0.1);
+                    max-width: 500px;
+                    width: 90%;
+                ">
+                    <div style="font-size: 24px; margin-bottom: 8px;">👑</div>
+                    <div style="font-weight: bold; font-size: 20px; margin-bottom: 5px;">وضع المسؤول</div>
+                    <div style="font-size: 15px; margin-top: 8px; color: #aaffaa;">
+                        يمكنك تحديد الفائزين وتحديث النتائج للجميع
+                    </div>
+                    <div style="font-size: 12px; margin-top: 10px; color: #88ff88; opacity: 0.8;">
+                        ⚡ النتائج تحفظ تلقائياً على GitHub
+                    </div>
+                </div>
+            </div>
         `;
     } else {
-        statusElement.innerHTML = '👁️ وضع المشاهد - مشاهدة النتائج فقط';
-        statusElement.style.cssText = `
-            text-align: center;
-            padding: 12px 20px;
-            margin: 15px auto;
-            background: rgba(255, 50, 50, 0.2);
-            border: 2px solid #ff5555;
-            color: #ffaaaa;
-            border-radius: 10px;
-            max-width: 500px;
-            font-weight: bold;
-            font-size: 16px;
+        statusElement.innerHTML = `
+            <div style="text-align: center; margin: 40px auto 60px;">
+                <div style="
+                    display: inline-block;
+                    padding: 18px 35px;
+                    background: linear-gradient(135deg, rgba(100, 0, 0, 0.2), rgba(50, 0, 0, 0.3));
+                    border: 2px solid #ff5555;
+                    color: #ffaaaa;
+                    border-radius: 12px;
+                    font-weight: bold;
+                    font-size: 17px;
+                    text-align: center;
+                    box-shadow: 0 0 30px rgba(255, 50, 50, 0.25),
+                                inset 0 0 20px rgba(255, 50, 50, 0.1);
+                    max-width: 500px;
+                    width: 90%;
+                ">
+                    <div style="font-size: 24px; margin-bottom: 8px;">👁️</div>
+                    <div style="font-weight: bold; font-size: 20px; margin-bottom: 5px;">وضع المشاهد</div>
+                    <div style="font-size: 15px; margin-top: 8px; color: #ffaaaa;">
+                        مشاهدة النتائج فقط
+                    </div>
+                    <div style="font-size: 12px; margin-top: 10px; color: #ff8888; opacity: 0.8;">
+                        🔒 لتحديد الفائزين اتصل بمسؤول البطولة
+                    </div>
+                </div>
+            </div>
         `;
     }
 }
@@ -1405,54 +1450,128 @@ function closeStory() {
     document.getElementById("storyModal").style.display = "none";
 }
 
-// ====== إضافة أزرار التحكم ======
+// ====== إضافة أزرار التحكم (بعد مربع الروابط وقبل حالة المسؤول) ======
 function addControlButtons() {
     if (!isAdmin) return;
 
+    // إزالة أي أزرار تحكم قديمة
+    const oldControls = document.getElementById('adminControls');
+    if (oldControls) {
+        oldControls.remove();
+    }
+
     const controlsHTML = `
-        <div style="text-align: center; margin: 30px 0;">
-            <button onclick="saveTournamentData()" style="
-                background: linear-gradient(45deg, #00c853, #64dd17);
-                color: white;
-                padding: 12px 25px;
-                border: none;
-                border-radius: 25px;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
-                margin: 10px;
-                transition: 0.3s;
-            ">💾 حفظ النتائج للجميع</button>
+        <div id="adminControls" style="
+            text-align: center;
+            margin: 40px auto 20px;
+        ">
+            <div style="
+                display: inline-flex;
+                gap: 15px;
+                padding: 20px;
+                background: linear-gradient(135deg, rgba(0, 20, 40, 0.9), rgba(0, 40, 80, 0.9));
+                border-radius: 20px;
+                border: 2px solid rgba(0, 200, 255, 0.5);
+                box-shadow: 0 0 35px rgba(0, 200, 255, 0.3),
+                            inset 0 0 20px rgba(0, 200, 255, 0.1);
+            ">
+                <button onclick="saveTournamentData()" style="
+                    background: linear-gradient(45deg, #00c853, #64dd17);
+                    color: white;
+                    padding: 14px 28px;
+                    border: none;
+                    border-radius: 20px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: 0.3s;
+                    min-width: 170px;
+                    box-shadow: 0 4px 15px rgba(0, 200, 80, 0.4);
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 200, 80, 0.6)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0, 200, 80, 0.4)'">
+                    💾 حفظ للجميع
+                </button>
 
-            <button onclick="location.reload()" style="
-                background: linear-gradient(45deg, #2196F3, #03A9F4);
-                color: white;
-                padding: 12px 25px;
-                border: none;
-                border-radius: 25px;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
-                margin: 10px;
-                transition: 0.3s;
-            ">🔄 تحديث الصفحة</button>
+                <button onclick="location.reload()" style="
+                    background: linear-gradient(45deg, #2196F3, #03A9F4);
+                    color: white;
+                    padding: 14px 28px;
+                    border: none;
+                    border-radius: 20px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: 0.3s;
+                    min-width: 170px;
+                    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(33, 150, 243, 0.6)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(33, 150, 243, 0.4)'">
+                    🔄 تحديث
+                </button>
 
-            <button onclick="localStorage.clear(); location.reload();" style="
-                background: linear-gradient(45deg, #ff5252, #ff8a80);
-                color: white;
-                padding: 12px 25px;
-                border: none;
-                border-radius: 25px;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
-                margin: 10px;
-                transition: 0.3s;
-            ">🚪 تسجيل الخروج</button>
+                <button onclick="localStorage.clear(); location.reload();" style="
+                    background: linear-gradient(45deg, #ff5252, #ff8a80);
+                    color: white;
+                    padding: 14px 28px;
+                    border: none;
+                    border-radius: 20px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: 0.3s;
+                    min-width: 170px;
+                    box-shadow: 0 4px 15px rgba(255, 82, 82, 0.4);
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255, 82, 82, 0.6)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255, 82, 82, 0.4)'">
+                    🚪 خروج
+                </button>
+            </div>
         </div>
     `;
 
-    document.body.insertAdjacentHTML('beforeend', controlsHTML);
+    // إضافة الأزرار بعد الفوتر وقبل حالة المسؤول
+    const adminStatus = document.getElementById('adminStatus');
+    if (adminStatus) {
+        adminStatus.insertAdjacentHTML('beforebegin', controlsHTML);
+    } else {
+        // إذا لم تكن هناك حالة مسؤول، نضيفها بعد الفوتر
+        const footerBox = document.querySelector('.footer-box');
+        if (footerBox) {
+            footerBox.insertAdjacentHTML('afterend', controlsHTML);
+        } else {
+            document.body.insertAdjacentHTML('beforeend', controlsHTML);
+        }
+    }
+}
+
+// ====== اختبار اتصال GitHub ======
+async function testGitHubConnection() {
+    console.log('🔗 اختبار اتصال GitHub...');
+    console.log('المالك:', REPO_OWNER);
+    console.log('المستودع:', REPO_NAME);
+
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`,
+            {
+                headers: GITHUB_TOKEN ? {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                } : {}
+            }
+        );
+
+        if (response.ok) {
+            console.log('✅ المستودع موجود!');
+            return true;
+        } else {
+            console.error('❌ خطأ:', response.status);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ خطأ في الاتصال:', error);
+        return false;
+    }
 }
 
 // ====== بدء النظام ======
@@ -1479,6 +1598,9 @@ async function initializeTournament() {
 
     // 5. تطبيق الترجمة
     updatePageLanguage();
+
+    // 6. اختبار اتصال GitHub
+    setTimeout(testGitHubConnection, 2000);
 }
 
 // ====== تشغيل عند تحميل الصفحة ======
@@ -1522,5 +1644,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 </body>
-
 </html>
