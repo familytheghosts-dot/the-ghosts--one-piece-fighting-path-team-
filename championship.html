@@ -916,7 +916,7 @@ body {
 
 <script>
 
-// ====== نظام البطولة الكامل (نسخة محسنة) ======
+// ====== نظام البطولة الكامل (نسخة محسنة ونهائية) ======
 
 // ====== المتغيرات الأساسية ======
 let GITHUB_TOKEN = '';
@@ -943,6 +943,104 @@ const playerImages = {
     "اللاعب 14": "images/botola15.webp",
     "اللاعب 15": "images/botola16.webp",
     "اللاعب 16": "images/botola14.webp"
+};
+
+// ====== هيكل البطولة ======
+const tournamentStructure = {
+    // المجموعة A
+    'A_round4': {
+        slots: 4,
+        next: 'A_round2',
+        positions: [0, 0, 1, 1] // أي slot يذهب لأي position
+    },
+    'A_round2': {
+        slots: 2,
+        next: 'A_final',
+        positions: [0, 0]
+    },
+    'A_final': {
+        slots: 1,
+        next: 'A_B_Winner',
+        positions: [0]
+    },
+    
+    // المجموعة B
+    'B_round4': {
+        slots: 4,
+        next: 'B_round2',
+        positions: [0, 0, 1, 1]
+    },
+    'B_round2': {
+        slots: 2,
+        next: 'B_final',
+        positions: [0, 0]
+    },
+    'B_final': {
+        slots: 1,
+        next: 'A_B_Winner',
+        positions: [0]
+    },
+    
+    // المجموعة C
+    'C_round4': {
+        slots: 4,
+        next: 'C_round2',
+        positions: [0, 0, 1, 1]
+    },
+    'C_round2': {
+        slots: 2,
+        next: 'C_final',
+        positions: [0, 0]
+    },
+    'C_final': {
+        slots: 1,
+        next: 'C_D_Winner',
+        positions: [0]
+    },
+    
+    // المجموعة D
+    'D_round4': {
+        slots: 4,
+        next: 'D_round2',
+        positions: [0, 0, 1, 1]
+    },
+    'D_round2': {
+        slots: 2,
+        next: 'D_final',
+        positions: [0, 0]
+    },
+    'D_final': {
+        slots: 1,
+        next: 'C_D_Winner',
+        positions: [0]
+    },
+    
+    // النهائيات
+    'A_B_Winner': {
+        slots: 1,
+        next: 'A_B_Winner2',
+        positions: [0]
+    },
+    'C_D_Winner': {
+        slots: 1,
+        next: 'C_D_Winner2',
+        positions: [0]
+    },
+    'A_B_Winner2': {
+        slots: 1,
+        next: 'Champion',
+        positions: [0]
+    },
+    'C_D_Winner2': {
+        slots: 1,
+        next: 'Champion',
+        positions: [0]
+    },
+    'Champion': {
+        slots: 1,
+        next: null,
+        positions: [0]
+    }
 };
 
 // ====== زر "أنا المسؤول" في الأسفل ======
@@ -1077,7 +1175,7 @@ function updateAdminStatus(admin) {
                     <div style="font-size: 24px; margin-bottom: 8px;">👑</div>
                     <div style="font-weight: bold; font-size: 20px; margin-bottom: 5px;">وضع المسؤول</div>
                     <div style="font-size: 15px; margin-top: 8px; color: #aaffaa;">
-                        يمكنك تحديد الفائزين - يتم الحفظ تلقائياً للجميع
+                        يتم الحفظ تلقائياً عند كل تحديد
                     </div>
                     <div style="font-size: 12px; margin-top: 10px; color: #88ff88; opacity: 0.8;">
                         ⚡ الزوار يرون النتائج فوراً
@@ -1130,13 +1228,190 @@ function requirePassword() {
     return false;
 }
 
+// ====== الدالة الرئيسية لتحديد الفائز (محسنة نهائياً) ======
+async function secureSelect(clickedSlot, nextRoundId, position) {
+    if (!requirePassword()) return;
+
+    const label = clickedSlot.querySelector(".label").textContent.trim();
+    if (!label || label === '') {
+        alert('⚠️ اختر لاعباً أولاً');
+        return;
+    }
+
+    const imgSrc = playerImages[label] || "";
+    const currentRoundId = clickedSlot.closest('[id]').id;
+    
+    console.log(`🎮 تحديد: ${label} من ${currentRoundId} إلى ${nextRoundId} (الموقع: ${position})`);
+
+    // ✅ تحديث الجولة التالية
+    const nextRound = document.getElementById(nextRoundId);
+    if (!nextRound) {
+        console.error('❌ لم أجد الجولة التالية:', nextRoundId);
+        return;
+    }
+
+    // الحصول على جميع السلوطات في الجولة التالية
+    const targets = nextRound.querySelectorAll(".slot");
+    
+    // تحديد السلوط المستهدف بناءً على position
+    let targetSlot;
+    if (targets.length === 1) {
+        targetSlot = targets[0];
+    } else if (position >= 0 && position < targets.length) {
+        targetSlot = targets[position];
+    } else {
+        targetSlot = targets[0];
+    }
+
+    if (!targetSlot) {
+        console.error('❌ لم أجد السلوط المستهدف');
+        return;
+    }
+
+    // ✅ تحديث الاسم والصورة
+    const labelBox = targetSlot.querySelector(".label");
+    const imgBox = targetSlot.querySelector(".side-img");
+
+    if (labelBox) {
+        labelBox.textContent = label;
+        console.log(`✅ تم تعيين ${label} في ${nextRoundId}`);
+    }
+    
+    if (imgBox && imgSrc) {
+        imgBox.src = imgSrc;
+        imgBox.style.transform = "translateY(-50%)";
+        imgBox.style.display = "block";
+    }
+
+    // ✅ إضافة active للسلوط المستهدف
+    targetSlot.classList.add("active");
+
+    // ✅ نسخ للجولات اللاحقة
+    updateNextStages(nextRoundId, label, imgSrc);
+
+    // ✅ الحفظ التلقائي بعد تحديث الواجهة مباشرة
+    if (isAdmin && GITHUB_TOKEN) {
+        setTimeout(async () => {
+            const success = await autoSaveTournamentData();
+            if (success) {
+                showTempMessage(`✅ تم حفظ ${label} للجميع!`, '#4CAF50', 3000);
+            }
+        }, 500);
+    }
+}
+
+// ====== تحديث الجولات اللاحقة ======
+function updateNextStages(currentRoundId, winner, image) {
+    // خريطة نسخ الجولات
+    const copyMap = {
+        'A_round2': 'A_final',
+        'B_round2': 'B_final',
+        'C_round2': 'C_final',
+        'D_round2': 'D_final',
+        'A_final': 'A_B_Winner',
+        'B_final': 'A_B_Winner',
+        'C_final': 'C_D_Winner',
+        'D_final': 'C_D_Winner',
+        'A_B_Winner': 'A_B_Winner2',
+        'C_D_Winner': 'C_D_Winner2',
+        'A_B_Winner2': 'Champion',
+        'C_D_Winner2': 'Champion'
+    };
+
+    let currentId = currentRoundId;
+    let maxLoops = 10;
+    
+    while (copyMap[currentId] && maxLoops > 0) {
+        const nextId = copyMap[currentId];
+        const nextRound = document.getElementById(nextId);
+        
+        if (nextRound) {
+            const slots = nextRound.querySelectorAll('.slot');
+            if (slots.length > 0) {
+                const targetSlot = slots[0];
+                const label = targetSlot.querySelector('.label');
+                const img = targetSlot.querySelector('.side-img');
+                
+                if (label) label.textContent = winner;
+                if (img && image) {
+                    img.src = image;
+                    img.style.display = 'block';
+                    img.style.transform = 'translateY(-50%)';
+                }
+                
+                targetSlot.classList.add('active');
+                console.log(`✅ تم نسخ ${winner} إلى ${nextId}`);
+            }
+        }
+        
+        currentId = nextId;
+        maxLoops--;
+    }
+}
+
+// ====== تحديد البطل النهائي ======
+async function championSelected(slot) {
+    if (!requirePassword()) return;
+
+    const label = slot.querySelector(".label").textContent.trim();
+    if (!label || label === '') {
+        alert("⚠️ اختر الفائز أولاً من الجولات النهائية");
+        return;
+    }
+
+    slot.classList.add("active");
+
+    // الحفظ التلقائي
+    if (isAdmin && GITHUB_TOKEN) {
+        const success = await autoSaveTournamentData();
+        if (success) {
+            alert(`🎉 ${label} هو البطل النهائي!\n\nتم حفظ النتيجة للجميع.`);
+        }
+    }
+}
+
+// ====== جمع كل بيانات البطولة ======
+function collectAllTournamentData() {
+    const data = {};
+    
+    // ✅ جمع من كل المراحل المتقدمة
+    const allRounds = [
+        'A_round2', 'B_round2', 'C_round2', 'D_round2',
+        'A_final', 'B_final', 'C_final', 'D_final',
+        'A_B_Winner', 'C_D_Winner',
+        'A_B_Winner2', 'C_D_Winner2',
+        'Champion'
+    ];
+
+    allRounds.forEach(roundId => {
+        const round = document.getElementById(roundId);
+        if (round) {
+            const slots = round.querySelectorAll('.slot');
+            slots.forEach((slot, index) => {
+                const label = slot.querySelector('.label')?.textContent?.trim();
+                if (label && label !== '') {
+                    // ✅ إنشاء مفتاح فريد لكل slot
+                    const key = slots.length > 1 ? `${roundId}_${index}` : roundId;
+                    data[key] = {
+                        winner: label,
+                        image: playerImages[label] || "",
+                        timestamp: new Date().toISOString()
+                    };
+                }
+            });
+        }
+    });
+
+    console.log('📦 البيانات المجمعة:', Object.keys(data).length, 'نتيجة');
+    return data;
+}
+
 // ====== حفظ البيانات على GitHub (تلقائي) ======
 async function autoSaveTournamentData() {
     if (!GITHUB_TOKEN || !isAdmin) {
         return false;
     }
 
-    // إظهار رسالة تحميل مؤقتة
     showTempMessage('⏳ جاري الحفظ التلقائي...', '#2196F3');
 
     try {
@@ -1148,6 +1423,8 @@ async function autoSaveTournamentData() {
             showTempMessage('⚠️ لا توجد بيانات لحفظها', '#ff9800', 2000);
             return false;
         }
+
+        console.log(`📤 جاري حفظ ${Object.keys(data).length} نتيجة...`);
 
         // البحث عن الـ issue الحالي
         const issuesResponse = await fetch(
@@ -1176,7 +1453,6 @@ async function autoSaveTournamentData() {
 
         let response;
         if (issueNumber) {
-            // تحديث issue موجود
             response = await fetch(
                 `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issueNumber}`,
                 {
@@ -1189,7 +1465,6 @@ async function autoSaveTournamentData() {
                 }
             );
         } else {
-            // إنشاء issue جديد
             response = await fetch(
                 `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`,
                 {
@@ -1204,60 +1479,22 @@ async function autoSaveTournamentData() {
         }
 
         if (response.ok) {
-            showTempMessage('✅ تم الحفظ للجميع!', '#4CAF50', 3000);
             return true;
         } else {
             console.error('❌ فشل في الحفظ:', response.status);
-            showTempMessage('❌ فشل الحفظ', '#f44336', 3000);
             return false;
         }
     } catch (error) {
         console.error('❌ خطأ في الاتصال:', error);
-        showTempMessage('❌ خطأ في الاتصال', '#f44336', 3000);
         return false;
     }
 }
 
-// ====== جمع كل بيانات البطولة ======
-function collectAllTournamentData() {
-    const data = {};
-    
-    // فقط الجولات المتقدمة
-    const validRounds = [
-        'A_round2', 'B_round2', 'C_round2', 'D_round2',
-        'A_final', 'B_final', 'C_final', 'D_final',
-        'A_B_Winner', 'C_D_Winner',
-        'A_B_Winner2', 'C_D_Winner2',
-        'Champion'
-    ];
-
-    validRounds.forEach(roundId => {
-        const roundElement = document.getElementById(roundId);
-        if (roundElement) {
-            const slot = roundElement.querySelector('.slot');
-            if (slot) {
-                const label = slot.querySelector('.label')?.textContent?.trim();
-                if (label && label !== '') {
-                    data[roundId] = {
-                        winner: label,
-                        image: playerImages[label] || "",
-                        timestamp: new Date().toISOString()
-                    };
-                }
-            }
-        }
-    });
-
-    return data;
-}
-
 // ====== إظهار رسالة مؤقتة ======
 function showTempMessage(text, color, duration = 2000) {
-    // إزالة أي رسالة قديمة
     const oldMsg = document.getElementById('tempMessage');
     if (oldMsg) oldMsg.remove();
     
-    // إنشاء الرسالة الجديدة
     const msg = document.createElement('div');
     msg.id = 'tempMessage';
     msg.innerHTML = text;
@@ -1277,7 +1514,6 @@ function showTempMessage(text, color, duration = 2000) {
     
     document.body.appendChild(msg);
     
-    // إزالة الرسالة بعد المدة المحددة
     setTimeout(() => {
         if (msg.parentNode) {
             msg.style.animation = 'slideOut 0.3s ease';
@@ -1333,15 +1569,33 @@ function applyTournamentData(data) {
 
     let appliedCount = 0;
 
-    // تطبيق البيانات فقط على الجولات الصحيحة
-    Object.keys(data).forEach(roundId => {
-        const slotData = data[roundId];
+    Object.keys(data).forEach(key => {
+        const slotData = data[key];
         if (!slotData || !slotData.winner) return;
+
+        // استخراج roundId و position من المفتاح
+        let roundId, position = 0;
+        
+        if (key.includes('_') && !['A_B_Winner', 'C_D_Winner', 'A_B_Winner2', 'C_D_Winner2'].some(id => key.startsWith(id))) {
+            const parts = key.split('_');
+            const lastPart = parts[parts.length - 1];
+            if (!isNaN(lastPart)) {
+                roundId = parts.slice(0, -1).join('_');
+                position = parseInt(lastPart);
+            } else {
+                roundId = key;
+            }
+        } else {
+            roundId = key;
+        }
 
         const roundElement = document.getElementById(roundId);
         if (!roundElement) return;
 
-        const slot = roundElement.querySelector('.slot');
+        const slots = roundElement.querySelectorAll('.slot');
+        if (slots.length === 0) return;
+
+        const slot = slots[position] || slots[0];
         if (!slot) return;
 
         const label = slot.querySelector('.label');
@@ -1364,107 +1618,10 @@ function applyTournamentData(data) {
     console.log(`✅ تم تطبيق ${appliedCount} نتيجة من GitHub`);
 }
 
-// ====== الدالة الرئيسية لتحديد الفائز (محسنة) ======
-async function secureSelect(clickedSlot, nextRoundId, position) {
-    if (!requirePassword()) return;
-
-    const label = clickedSlot.querySelector(".label").textContent.trim();
-    if (!label || label === '') {
-        alert('⚠️ اختر لاعباً أولاً');
-        return;
-    }
-
-    const imgSrc = playerImages[label] || "";
-
-    // تحديث الواجهة
-    const nextRound = document.getElementById(nextRoundId);
-    if (!nextRound) return;
-
-    const targets = nextRound.querySelectorAll(".slot");
-    const targetSlot = targets[position] || targets[0];
-    if (!targetSlot) return;
-
-    // إزالة active من جميع السلوطات في هذه الجولة أولاً
-    targets.forEach(s => s.classList.remove('active'));
-
-    const labelBox = targetSlot.querySelector(".label");
-    const imgBox = targetSlot.querySelector(".side-img");
-
-    if (labelBox) labelBox.textContent = label;
-    if (imgBox) {
-        imgBox.src = imgSrc;
-        imgBox.style.transform = "translateY(-50%)";
-        imgBox.style.display = "block";
-    }
-
-    // ✅ لا تضيف active للجولة الأولى (محجوزة دائماً)
-    targetSlot.classList.add("active");
-
-    // نسخ للجولات المتقدمة
-    if (nextRoundId === "A_B_Winner" || nextRoundId === "C_D_Winner") {
-        const copyRoundId = nextRoundId === "A_B_Winner" ? "A_B_Winner2" : "C_D_Winner2";
-        const copySlot = document.querySelector(`#${copyRoundId} .slot`);
-        
-        if (copySlot) {
-            const copyLabel = copySlot.querySelector(".label");
-            const copyImg = copySlot.querySelector(".side-img");
-            
-            if (copyLabel) copyLabel.textContent = label;
-            if (copyImg) {
-                copyImg.src = imgSrc;
-                copyImg.style.transform = "translateY(-50%)";
-                copyImg.style.display = "block";
-            }
-            
-            copySlot.classList.add("active");
-        }
-    }
-
-    // ✅ الحفظ التلقائي الفوري
-    if (isAdmin && GITHUB_TOKEN) {
-        setTimeout(async () => {
-            const success = await autoSaveTournamentData();
-            if (success) {
-                // تحديث الصفحة تلقائياً للمشاهدين بعد 3 ثواني
-                setTimeout(() => {
-                    if (!isAdmin) {
-                        location.reload();
-                    }
-                }, 3000);
-            }
-        }, 500);
-    }
-}
-
-// ====== تحديد البطل النهائي ======
-async function championSelected(slot) {
-    if (!requirePassword()) return;
-
-    const label = slot.querySelector(".label").textContent.trim();
-    if (!label || label === '') {
-        alert("⚠️ اختر الفائز أولاً من الجولات النهائية");
-        return;
-    }
-
-    // إزالة active من جميع السلوطات في Champion
-    document.querySelectorAll('#Champion .slot').forEach(s => s.classList.remove('active'));
-    
-    slot.classList.add("active");
-
-    // الحفظ التلقائي
-    if (isAdmin && GITHUB_TOKEN) {
-        const success = await autoSaveTournamentData();
-        if (success) {
-            alert(`🎉 ${label} هو البطل النهائي!\n\nتم حفظ النتيجة للجميع.`);
-        }
-    }
-}
-
 // ====== زر إعادة التعيين (للمسؤول فقط) ======
 function addResetButton() {
     if (!isAdmin) return;
     
-    // إزالة الزر القديم إذا كان موجوداً
     const oldResetBtn = document.getElementById('resetTournamentBtn');
     if (oldResetBtn) oldResetBtn.remove();
     
@@ -1512,7 +1669,6 @@ function addResetButton() {
         </div>
     `;
     
-    // إضافة الزر بعد حالة المسؤول
     const adminStatus = document.getElementById('adminStatus');
     if (adminStatus) {
         adminStatus.insertAdjacentHTML('afterend', resetBtnHTML);
@@ -1531,7 +1687,6 @@ async function resetTournamentFull() {
         return;
     }
 
-    // تأكيد مزدوج
     const confirm1 = confirm('⚠️ تحذير شديد!\n\nهل تريد إعادة تعيين البطولة بالكامل؟\n\nسيتم:\n• مسح جميع النتائج\n• إغلاق البيانات على GitHub\n• إعادة الصفحة\n\nهذا الإجراء لا يمكن التراجع عنه!');
     if (!confirm1) return;
     
@@ -1581,7 +1736,6 @@ async function resetTournamentFull() {
                         }
                     );
                 }
-                console.log('✅ تم إغلاق بيانات GitHub');
             }
         }
 
@@ -1599,8 +1753,8 @@ async function resetTournamentFull() {
         roundsToReset.forEach(roundId => {
             const round = document.getElementById(roundId);
             if (round) {
-                const slot = round.querySelector('.slot');
-                if (slot) {
+                const slots = round.querySelectorAll('.slot');
+                slots.forEach(slot => {
                     slot.classList.remove('active');
                     const label = slot.querySelector('.label');
                     if (label) label.textContent = '';
@@ -1609,14 +1763,11 @@ async function resetTournamentFull() {
                         img.src = '';
                         img.style.display = 'none';
                     }
-                }
+                });
             }
         });
         
-        // 3. مسح localStorage
-        localStorage.clear();
-        
-        // 4. إعادة تحميل الصفحة
+        // 3. إعادة تحميل الصفحة
         if (btn) btn.innerHTML = '✅ تمت الإعادة!';
         showTempMessage('🎉 تمت إعادة التعيين! جاري إعادة التحميل...', '#4CAF50');
         
@@ -1626,43 +1777,13 @@ async function resetTournamentFull() {
         
     } catch (error) {
         console.error('❌ خطأ في إعادة التعيين:', error);
-        showTempMessage('❌ فشلت العملية - جرب الطريقة البديلة', '#f44336', 4000);
+        showTempMessage('❌ فشلت العملية', '#f44336', 4000);
         
         if (btn) {
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
-        
-        // عرض كود بديل للإعادة
-        showAlternativeResetCode();
     }
-}
-
-// ====== عرض كود بديل للإعادة ======
-function showAlternativeResetCode() {
-    const code = `
-// انسخ هذا الكود والصقه في Console (F12)
-// 1. إعادة تعيين الواجهة
-['A_round2','B_round2','C_round2','D_round2','A_final','B_final','C_final','D_final','A_B_Winner','C_D_Winner','A_B_Winner2','C_D_Winner2','Champion']
-.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-        const slot = el.querySelector('.slot');
-        if (slot) {
-            slot.classList.remove('active');
-            const label = slot.querySelector('.label');
-            if (label) label.textContent = '';
-            const img = slot.querySelector('.side-img');
-            if (img) { img.src = ''; img.style.display = 'none'; }
-        }
-    }
-});
-localStorage.clear();
-alert('✅ تم إعادة التعيين محلياً!');
-// 2. لإغلاق GitHub: اذهب يدوياً إلى Issues وأغلقها
-`;
-    
-    prompt('إذا فشلت العملية، انسخ هذا الكود والصقه في Console (F12):', code);
 }
 
 // ====== نظام الترجمة ======
@@ -1863,6 +1984,7 @@ document.head.appendChild(style);
 
 </body>
 </html>
+
 
 
 
