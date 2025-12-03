@@ -1127,7 +1127,7 @@ function requirePassword() {
     return false;
 }
 
-// ====== حفظ البيانات على GitHub ======
+// ====== حفظ البيانات على GitHub (مصحح) ======
 async function saveTournamentData() {
     if (!GITHUB_TOKEN || !isAdmin) {
         alert('⚠️ لا يمكن الحفظ - ليس مسؤولاً');
@@ -1143,7 +1143,7 @@ async function saveTournamentData() {
         // جمع بيانات البطولة بشكل صحيح
         const data = {};
         
-        // فقط الجولات التي يجب أن تحتوي على فائزين
+        // فقط الجولات التي يجب أن تحتوي على فائزين (الجولات المتقدمة فقط)
         const validRounds = [
             'A_round2', 'B_round2', 'C_round2', 'D_round2',
             'A_final', 'B_final', 'C_final', 'D_final',
@@ -1311,7 +1311,7 @@ async function loadTournamentData() {
     return {};
 }
 
-// ====== تطبيق البيانات على الواجهة (مصحح) ======
+// ====== تطبيق البيانات على الواجهة (مصحح نهائياً) ======
 function applyTournamentData(data) {
     if (!data || Object.keys(data).length === 0) {
         console.log('⚠️ لا توجد بيانات لتطبيقها');
@@ -1320,7 +1320,7 @@ function applyTournamentData(data) {
 
     let appliedCount = 0;
 
-    // تطبيق البيانات فقط على الجولات الصحيحة
+    // تطبيق البيانات فقط على الجولات المتقدمة (وليس الجولة الأولى)
     Object.keys(data).forEach(roundId => {
         const slotData = data[roundId];
         if (!slotData || !slotData.winner) return;
@@ -1430,7 +1430,7 @@ async function resetTournament() {
 
 // ====== إعادة تعيين الواجهة محلياً (مصحح) ======
 function resetLocalTournament() {
-    // قائمة الجولات التي يجب إعادة تعيينها فقط
+    // قائمة الجولات التي يجب إعادة تعيينها فقط (الجولات المتقدمة)
     const roundsToReset = [
         'A_round2', 'B_round2', 'C_round2', 'D_round2',
         'A_final', 'B_final', 'C_final', 'D_final',
@@ -1461,7 +1461,7 @@ function resetLocalTournament() {
     console.log('✅ تمت إعادة تعيين الواجهة محلياً');
 }
 
-// ====== الدالة الرئيسية لتحديد الفائز (مصحح) ======
+// ====== الدالة الرئيسية لتحديد الفائز (مصحح نهائياً) ======
 async function secureSelect(clickedSlot, nextRoundId, position) {
     if (!requirePassword()) return;
 
@@ -1500,26 +1500,11 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
     targetSlot.classList.add("active");
     hasChanges = true;
 
-    // نسخ للجولات المتقدمة
-    if (nextRoundId === "A_B_Winner") {
-        const copySlot = document.querySelector("#A_B_Winner2 .slot");
-        if (copySlot) {
-            const copyLabel = copySlot.querySelector(".label");
-            const copyImg = copySlot.querySelector(".side-img");
-            
-            if (copyLabel) copyLabel.textContent = label;
-            if (copyImg) {
-                copyImg.src = imgSrc;
-                copyImg.style.transform = "translateY(-50%)";
-                copyImg.style.display = "block";
-            }
-            
-            copySlot.classList.add("active");
-        }
-    }
-    
-    if (nextRoundId === "C_D_Winner") {
-        const copySlot = document.querySelector("#C_D_Winner2 .slot");
+    // ✅ لا تنسخ للجولات المتقدمة إلا إذا كانت الجولة المناسبة
+    if (nextRoundId === "A_B_Winner" || nextRoundId === "C_D_Winner") {
+        const copyRoundId = nextRoundId === "A_B_Winner" ? "A_B_Winner2" : "C_D_Winner2";
+        const copySlot = document.querySelector(`#${copyRoundId} .slot`);
+        
         if (copySlot) {
             const copyLabel = copySlot.querySelector(".label");
             const copyImg = copySlot.querySelector(".side-img");
@@ -1886,6 +1871,7 @@ window.addEventListener('beforeunload', function(e) {
 
 </body>
 </html>
+
 
 
 
