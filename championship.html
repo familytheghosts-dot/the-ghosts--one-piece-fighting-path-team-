@@ -915,7 +915,6 @@ body {
 </div>
 
 <script>
-
 // ====== نظام البطولة الكامل ======
 
 // ====== المتغيرات الأساسية ======
@@ -924,7 +923,6 @@ let isAdmin = false;
 const REPO_OWNER = 'familytheghosts-dot';
 const REPO_NAME = 'the-ghosts--one-piece-fighting-path-team-';
 let tournamentData = {};
-let hasChanges = false; // لتتبع التغييرات
 
 // ====== خريطة اللاعبين ======
 const playerImages = {
@@ -948,9 +946,13 @@ const playerImages = {
 
 // ====== زر "أنا المسؤول" في الأسفل ======
 function addAdminButton() {
+    // إزالة الزر القديم إذا كان موجوداً
     const oldButton = document.getElementById('adminAccessButton');
-    if (oldButton) oldButton.remove();
+    if (oldButton) {
+        oldButton.remove();
+    }
     
+    // إنشاء زر جديد فقط إذا لم يكن المستخدم مسؤولاً
     if (!isAdmin) {
         const adminButton = document.createElement('div');
         adminButton.id = 'adminAccessButton';
@@ -981,6 +983,7 @@ function addAdminButton() {
             </div>
         `;
         
+        // إضافة الزر بعد الفوتر مباشرة
         const footerBox = document.querySelector('.footer-box');
         if (footerBox) {
             footerBox.parentNode.insertBefore(adminButton, footerBox.nextSibling);
@@ -988,9 +991,12 @@ function addAdminButton() {
             document.body.appendChild(adminButton);
         }
         
+        // إضافة حدث النقر على الزر
         setTimeout(() => {
             const btn = document.getElementById('becomeAdminBtn');
-            if (btn) btn.addEventListener('click', handleAdminAccess);
+            if (btn) {
+                btn.addEventListener('click', handleAdminAccess);
+            }
         }, 100);
     }
 }
@@ -1002,10 +1008,11 @@ async function handleAdminAccess() {
                                '• لا: يمكنك مشاهدة النتائج فقط');
     
     if (!userIsAdmin) {
-        alert('👋 أهلاً بك! يمكنك مشاهدة نتائج البطولة.');
+        alert('👋 أهلاً بك! يمكنك مشاهدة نتائج البطولة.\nلتحديث النتائج، اتصل بمسؤول البطولة.');
         return;
     }
     
+    // طلب التوكن من المسؤول
     const userToken = prompt(`🎮 أدخل GitHub Token:
 
 التوكن يبدأ بـ ghp_
@@ -1017,19 +1024,14 @@ async function handleAdminAccess() {
         updateAdminStatus(true);
         addControlButtons();
         removeAdminButton();
+        alert('✅ تم تفعيل وضع المسؤول! يمكنك الآن تحديد الفائزين.');
         
-        // تحميل البيانات السابقة فوراً
+        // تحميل البيانات السابقة
         tournamentData = await loadTournamentData();
         if (Object.keys(tournamentData).length > 0) {
             applyTournamentData(tournamentData);
-            alert('✅ تم تحميل النتائج السابقة من GitHub');
-        } else {
-            alert('✅ تم تفعيل وضع المسؤول! يمكنك الآن تحديد الفائزين.');
+            console.log('✅ تم تطبيق البيانات السابقة');
         }
-        
-        // إضافة زر إعادة التعيين
-        addResetButton();
-        
     } else if (userToken) {
         alert('❌ التوكن غير صالح. يجب أن يبدأ بـ ghp_ أو github_pat_');
     } else {
@@ -1037,24 +1039,62 @@ async function handleAdminAccess() {
     }
 }
 
+// ====== نظام التوكن الذكي (بدون سؤال تلقائي) ======
+async function setupTokenSystem() {
+    console.log('🔐 بدء نظام المصادقة...');
+
+    // 1. محاولة قراءة token.html (إن وجد على جهاز المستخدم)
+    try {
+        const response = await fetch('token.html');
+        if (response.ok) {
+            const text = await response.text();
+            const tokenMatch = text.match(/GITHUB_TOKEN:\s*['"]([^'"]+)['"]/);
+
+            if (tokenMatch && tokenMatch[1]) {
+                GITHUB_TOKEN = tokenMatch[1];
+                isAdmin = true;
+                console.log('✅ تم تحميل التوكن من token.html');
+                updateAdminStatus(true);
+                addControlButtons();
+                return true;
+            }
+        }
+    } catch (error) {
+        console.log('ℹ️ token.html غير متوفر');
+    }
+
+    // 2. لا نسأل المستخدم تلقائياً، نعرض زر المسؤول فقط
+    updateAdminStatus(false);
+    addAdminButton();
+    return false;
+}
+
 // ====== إزالة زر المسؤول عند التحول إلى مسؤول ======
 function removeAdminButton() {
     const adminButton = document.getElementById('adminAccessButton');
-    if (adminButton) adminButton.remove();
+    if (adminButton) {
+        adminButton.remove();
+    }
 }
 
-// ====== تحديث حالة المسؤول ======
+// ====== تحديث حالة المسؤول (بعد مربع الروابط) ======
 function updateAdminStatus(admin) {
     let statusElement = document.getElementById('adminStatus');
-    if (statusElement) statusElement.remove();
     
+    // إزالة أي عنصر قديم
+    if (statusElement) {
+        statusElement.remove();
+    }
+    
+    // إنشاء العنصر الجديد
     statusElement = document.createElement('div');
     statusElement.id = 'adminStatus';
     
+    // إضافة العنصر بعد الفوتر مباشرة
     const footerBox = document.querySelector('.footer-box');
-    const adminButton = document.getElementById('adminAccessButton');
-    
     if (footerBox) {
+        // إضافة مربع المسؤول بعد زر المسؤول أو بعد الفوتر
+        const adminButton = document.getElementById('adminAccessButton');
         if (adminButton) {
             adminButton.parentNode.insertBefore(statusElement, adminButton.nextSibling);
         } else {
@@ -1131,21 +1171,18 @@ function requirePassword() {
 
     const becomeAdmin = confirm('❌ تحتاج صلاحيات المسؤول لتحديد الفائزين\n\n' +
                                'هل تريد التحول لوضع المسؤول؟');
-    if (becomeAdmin) handleAdminAccess();
+    if (becomeAdmin) {
+        handleAdminAccess();
+    }
     return false;
 }
 
-// ====== حفظ البيانات على GitHub (محسن) ======
+// ====== حفظ البيانات على GitHub ======
 async function saveTournamentData() {
     if (!GITHUB_TOKEN || !isAdmin) {
-        alert('⚠️ لا يمكن الحفظ - ليس مسؤولاً');
+        console.log('⚠️ لا يمكن الحفظ - ليس مسؤولاً');
         return false;
     }
-
-    // إظهار رسالة تحميل
-    const saveBtn = document.querySelector('[onclick="saveTournamentData()"]');
-    const originalText = saveBtn ? saveBtn.innerHTML : '';
-    if (saveBtn) saveBtn.innerHTML = '⏳ جاري الحفظ...';
 
     try {
         // جمع بيانات البطولة
@@ -1166,16 +1203,11 @@ async function saveTournamentData() {
             }
         });
 
-        // التحقق من وجود بيانات
-        if (Object.keys(data).length === 0) {
-            alert('⚠️ لا توجد بيانات لحفظها');
-            if (saveBtn) saveBtn.innerHTML = originalText;
-            return false;
-        }
+        console.log('💾 جاري حفظ البيانات...', data);
 
         // البحث عن الـ issue الحالي
         const issuesResponse = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=tournament-data&state=open`,
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=tournament-data`,
             {
                 headers: {
                     'Authorization': `token ${GITHUB_TOKEN}`,
@@ -1189,12 +1221,13 @@ async function saveTournamentData() {
             const issues = await issuesResponse.json();
             if (issues.length > 0) {
                 issueNumber = issues[0].number;
+                console.log('📝 تم العثور على issue موجود:', issueNumber);
             }
         }
 
         const requestBody = {
-            title: `🎯 نتائج البطولة - ${new Date().toLocaleDateString('ar-EG')} ${new Date().toLocaleTimeString('ar-EG')}`,
-            body: `### بيانات البطولة\n\nتم التحديث: ${new Date().toLocaleString('ar-EG')}\n\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``,
+            title: `🎯 نتائج البطولة - ${new Date().toLocaleDateString('ar-EG')}`,
+            body: `### بيانات البطولة\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``,
             labels: ['tournament-data']
         };
 
@@ -1228,52 +1261,26 @@ async function saveTournamentData() {
         }
 
         if (response.ok) {
-            // إظهار رسالة نجاح
-            const result = await response.json();
-            const issueUrl = result.html_url;
-            
-            alert(`✅ تم حفظ النتائج للجميع!\n\nيمكنك مشاهدتها على:\n${issueUrl}\n\nسيتمكن جميع الزوار من رؤية النتائج الجديدة بعد تحديث الصفحة.`);
-            
-            hasChanges = false;
-            if (saveBtn) saveBtn.innerHTML = '✅ تم الحفظ!';
-            
-            // إعادة تعيين الزر بعد 3 ثواني
-            setTimeout(() => {
-                if (saveBtn) saveBtn.innerHTML = originalText;
-            }, 3000);
-            
+            console.log('✅ تم حفظ النتائج على GitHub');
             return true;
         } else {
             const errorText = await response.text();
             console.error('❌ فشل في الحفظ:', response.status, errorText);
 
+            // رسائل خطأ مفيدة
             if (response.status === 401) {
-                alert('❌ التوكن غير صالح أو منتهي الصلاحية\nيرجى إدخال توكن جديد');
-                isAdmin = false;
-                updateAdminStatus(false);
-                addAdminButton();
+                alert('❌ التوكن غير صالح أو منتهي الصلاحية');
             } else if (response.status === 403) {
-                alert('❌ لا تملك الصلاحية لحفظ البيانات\nتأكد من صلاحيات التوكن');
+                alert('❌ لا تملك الصلاحية لحفظ البيانات');
             } else if (response.status === 404) {
-                alert(`❌ المستودع غير موجود\nتأكد من:\nالمالك: ${REPO_OWNER}\nالمستودع: ${REPO_NAME}`);
-            } else {
-                alert(`❌ خطأ غير معروف: ${response.status}`);
+                alert('❌ المستودع غير موجود. تأكد من REPO_NAME');
             }
-            
-            if (saveBtn) saveBtn.innerHTML = '❌ فشل الحفظ';
-            setTimeout(() => {
-                if (saveBtn) saveBtn.innerHTML = originalText;
-            }, 3000);
-            
+
             return false;
         }
     } catch (error) {
         console.error('❌ خطأ في الاتصال:', error);
-        alert('❌ تعذر الاتصال بـ GitHub. تحقق من اتصال الإنترنت');
-        if (saveBtn) saveBtn.innerHTML = '❌ فشل الاتصال';
-        setTimeout(() => {
-            if (saveBtn) saveBtn.innerHTML = originalText;
-        }, 3000);
+        alert('❌ تعذر الاتصال بـ GitHub. تحقق من الإنترنت');
         return false;
     }
 }
@@ -1282,33 +1289,21 @@ async function saveTournamentData() {
 async function loadTournamentData() {
     try {
         console.log('🔄 جاري جلب البيانات من GitHub...');
-        
-        // محاولة جلب البيانات من issues المفتوحة
         const response = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=tournament-data&state=open&sort=updated&direction=desc`
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=tournament-data&state=open`
         );
 
         if (response.ok) {
             const issues = await response.json();
             if (issues.length > 0) {
-                // أخذ أحدث issue
                 const latest = issues[0];
                 const body = latest.body;
-                
-                // البحث عن JSON في الـ body
-                const jsonMatch = body.match(/```json\n([\s\S]*?)\n```/) || 
-                                 body.match(/```\n([\s\S]*?)\n```/) ||
-                                 body.match(/{[\s\S]*}/);
-                
+                const jsonMatch = body.match(/```json\n([\s\S]*?)\n```/);
+
                 if (jsonMatch) {
-                    const jsonString = jsonMatch[1] || jsonMatch[0];
-                    try {
-                        const data = JSON.parse(jsonString);
-                        console.log('✅ تم تحميل البيانات من GitHub');
-                        return data;
-                    } catch (e) {
-                        console.log('❌ خطأ في تحليل JSON:', e);
-                    }
+                    const data = JSON.parse(jsonMatch[1]);
+                    console.log('✅ تم تحميل البيانات من GitHub');
+                    return data;
                 }
             }
         }
@@ -1321,13 +1316,6 @@ async function loadTournamentData() {
 
 // ====== تطبيق البيانات على الواجهة ======
 function applyTournamentData(data) {
-    if (!data || Object.keys(data).length === 0) {
-        console.log('⚠️ لا توجد بيانات لتطبيقها');
-        return;
-    }
-    
-    let appliedCount = 0;
-    
     Object.keys(data).forEach(slotId => {
         const slotData = data[slotId];
         if (!slotData || !slotData.winner) return;
@@ -1341,9 +1329,8 @@ function applyTournamentData(data) {
         const label = slot.querySelector('.label');
         const image = slot.querySelector('.side-img');
 
-        if (label && slotData.winner) {
+        if (label) {
             label.textContent = slotData.winner;
-            appliedCount++;
         }
 
         if (image && slotData.image) {
@@ -1354,120 +1341,6 @@ function applyTournamentData(data) {
 
         slot.classList.add('active');
     });
-    
-    console.log(`✅ تم تطبيق ${appliedCount} نتيجة من GitHub`);
-}
-
-// ====== إعادة تعيين البطولة بالكامل ======
-async function resetTournament() {
-    if (!isAdmin || !GITHUB_TOKEN) {
-        alert('❌ تحتاج صلاحيات المسؤول لإعادة التعيين');
-        return;
-    }
-
-    const confirmReset = confirm(`⚠️ تحذير شديد!\n\nهل تريد إعادة تعيين البطولة بالكامل؟\n\nسيتم:\n• مسح جميع النتائج المحفوظة على GitHub\n• إغلاق issue البيانات السابق\n• إعادة تعيين الواجهة محلياً\n\nهذا الإجراء لا يمكن التراجع عنه!`);
-    
-    if (!confirmReset) return;
-
-    try {
-        // إظهار رسالة تحميل
-        const resetBtn = document.querySelector('[onclick="resetTournament()"]');
-        const originalText = resetBtn ? resetBtn.innerHTML : '';
-        if (resetBtn) resetBtn.innerHTML = '⏳ جاري إعادة التعيين...';
-
-        // 1. إغلاق جميع issues البيانات على GitHub
-        const issuesResponse = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=tournament-data`,
-            {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            }
-        );
-
-        if (issuesResponse.ok) {
-            const issues = await issuesResponse.json();
-            let closedCount = 0;
-            
-            for (const issue of issues) {
-                // إغلاق issue فقط إذا كان مفتوحاً
-                if (issue.state === 'open') {
-                    await fetch(
-                        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issue.number}`,
-                        {
-                            method: 'PATCH',
-                            headers: {
-                                'Authorization': `token ${GITHUB_TOKEN}`,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ 
-                                state: 'closed',
-                                title: `🔴 [مغلق] ${issue.title}` 
-                            })
-                        }
-                    );
-                    closedCount++;
-                }
-            }
-            
-            console.log(`✅ تم إغلاق ${closedCount} issue على GitHub`);
-        }
-
-        // 2. إعادة تعيين الواجهة محلياً
-        resetLocalTournament();
-        
-        // 3. مسح البيانات المحلية
-        localStorage.removeItem('tournamentData');
-        tournamentData = {};
-        hasChanges = false;
-        
-        // 4. إظهار رسالة نجاح
-        if (resetBtn) resetBtn.innerHTML = '✅ تم التعيين!';
-        
-        alert(`🎉 تمت إعادة تعيين البطولة بالكامل!\n\n• تم مسح النتائج من GitHub\n• تم إعادة تعيين الواجهة\n• يمكنك الآن بدء بطولة جديدة`);
-        
-        // إعادة تعيين الزر بعد 3 ثواني
-        setTimeout(() => {
-            if (resetBtn) resetBtn.innerHTML = originalText;
-        }, 3000);
-        
-    } catch (error) {
-        console.error('❌ خطأ في إعادة التعيين:', error);
-        alert('❌ حدث خطأ أثناء إعادة التعيين. جرب تحديث الصفحة أولاً');
-        
-        const resetBtn = document.querySelector('[onclick="resetTournament()"]');
-        if (resetBtn) resetBtn.innerHTML = '❌ فشل التعيين';
-        setTimeout(() => {
-            if (resetBtn) resetBtn.innerHTML = '🔄 تحديث وإعادة تعيين';
-        }, 3000);
-    }
-}
-
-// ====== إعادة تعيين الواجهة محلياً ======
-function resetLocalTournament() {
-    // إعادة تعيين جميع السلوطات (باستثناء الجولة الأولى)
-    const allSlots = document.querySelectorAll('.slot');
-    
-    allSlots.forEach(slot => {
-        // إزالة النشاط
-        slot.classList.remove('active');
-        
-        // إعادة تعيين التسمية للجولات المتقدمة فقط
-        const parentId = slot.closest('[id]')?.id;
-        if (parentId && !parentId.includes('round4')) {
-            const label = slot.querySelector('.label');
-            if (label) label.textContent = '';
-            
-            const img = slot.querySelector('.side-img');
-            if (img) {
-                img.src = '';
-                img.style.display = 'none';
-            }
-        }
-    });
-    
-    console.log('✅ تمت إعادة تعيين الواجهة محلياً');
 }
 
 // ====== الدالة الرئيسية لتحديد الفائز ======
@@ -1501,7 +1374,6 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
     }
 
     clickedSlot.classList.add("active");
-    hasChanges = true;
 
     // نسخ للجولات المتقدمة
     if (nextRoundId === "A_B_Winner") {
@@ -1532,13 +1404,13 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
         }
     }
 
-    // حفظ النتائج على GitHub (تلقائياً)
+    // حفظ النتائج على GitHub
     if (isAdmin && GITHUB_TOKEN) {
-        const autoSave = confirm(`🎮 تم تحديد ${label} فائزاً\n\nهل تريد حفظ النتيجة للجميع الآن؟`);
-        if (autoSave) {
-            await saveTournamentData();
+        const success = await saveTournamentData();
+        if (success) {
+            alert(`✅ تم تحديد ${label} فائزاً وتم حفظ النتائج للجميع!`);
         } else {
-            alert('💾 النتيجة محفوظة محلياً فقط\nتذكر الضغط على "حفظ للجميع" ليراها الجميع');
+            alert('⚠️ تم التحديد محلياً ولكن تعذر الحفظ على الإنترنت');
         }
     }
 }
@@ -1554,12 +1426,14 @@ async function championSelected(slot) {
     }
 
     slot.classList.add("active");
-    hasChanges = true;
-    
-    const finalConfirm = confirm(`🎉 مبروك! ${label} هو البطل النهائي!\n\nهل تريد حفظ النتيجة النهائية للجميع؟`);
-    
-    if (finalConfirm && isAdmin && GITHUB_TOKEN) {
-        await saveTournamentData();
+    alert(`🎉 مبروك! ${label} هو البطل النهائي!`);
+
+    // حفظ النتيجة النهائية
+    if (isAdmin && GITHUB_TOKEN) {
+        const success = await saveTournamentData();
+        if (success) {
+            alert('✅ تم حفظ النتيجة النهائية للجميع!');
+        }
     }
 }
 
@@ -1602,7 +1476,7 @@ function resize() {
 resize();
 window.addEventListener("resize", resize);
 
-const starCount = 300; // قلل العدد لتحسين الأداء
+const starCount = 700;
 const stars = [];
 
 for (let i = 0; i < starCount; i++) {
@@ -1658,12 +1532,15 @@ function closeStory() {
     document.getElementById("storyModal").style.display = "none";
 }
 
-// ====== إضافة أزرار التحكم ======
+// ====== إضافة أزرار التحكم (بعد مربع الروابط وقبل حالة المسؤول) ======
 function addControlButtons() {
     if (!isAdmin) return;
 
+    // إزالة أي أزرار تحكم قديمة
     const oldControls = document.getElementById('adminControls');
-    if (oldControls) oldControls.remove();
+    if (oldControls) {
+        oldControls.remove();
+    }
 
     const controlsHTML = `
         <div id="adminControls" style="
@@ -1679,8 +1556,6 @@ function addControlButtons() {
                 border: 2px solid rgba(0, 200, 255, 0.5);
                 box-shadow: 0 0 35px rgba(0, 200, 255, 0.3),
                             inset 0 0 20px rgba(0, 200, 255, 0.1);
-                flex-wrap: wrap;
-                justify-content: center;
             ">
                 <button onclick="saveTournamentData()" style="
                     background: linear-gradient(45deg, #00c853, #64dd17);
@@ -1699,23 +1574,6 @@ function addControlButtons() {
                     💾 حفظ للجميع
                 </button>
 
-                <button onclick="resetTournament()" style="
-                    background: linear-gradient(45deg, #ff9800, #ff5722);
-                    color: white;
-                    padding: 14px 28px;
-                    border: none;
-                    border-radius: 20px;
-                    font-size: 16px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: 0.3s;
-                    min-width: 170px;
-                    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255, 152, 0, 0.6)'" 
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255, 152, 0, 0.4)'">
-                    🔄 تحديث وإعادة تعيين
-                </button>
-
                 <button onclick="location.reload()" style="
                     background: linear-gradient(45deg, #2196F3, #03A9F4);
                     color: white;
@@ -1730,7 +1588,7 @@ function addControlButtons() {
                     box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(33, 150, 243, 0.6)'" 
                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(33, 150, 243, 0.4)'">
-                    🔃 إعادة تحميل الصفحة
+                    🔄 تحديث
                 </button>
 
                 <button onclick="localStorage.clear(); location.reload();" style="
@@ -1753,6 +1611,7 @@ function addControlButtons() {
         </div>
     `;
 
+    // إضافة الأزرار بعد زر المسؤول أو بعد الفوتر
     const adminStatus = document.getElementById('adminStatus');
     const adminButton = document.getElementById('adminAccessButton');
     
@@ -1770,15 +1629,11 @@ function addControlButtons() {
     }
 }
 
-// ====== إضافة زر إعادة التعيين ======
-function addResetButton() {
-    // الدالة موجودة مسبقاً (resetTournament)
-    console.log('✅ زر إعادة التعيين جاهز للاستخدام');
-}
-
 // ====== اختبار اتصال GitHub ======
 async function testGitHubConnection() {
     console.log('🔗 اختبار اتصال GitHub...');
+    console.log('المالك:', REPO_OWNER);
+    console.log('المستودع:', REPO_NAME);
     
     try {
         const response = await fetch(
@@ -1808,14 +1663,16 @@ async function testGitHubConnection() {
 async function initializeTournament() {
     console.log('🚀 بدء تشغيل البطولة...');
 
-    // 1. إعداد النظام
+    // 1. إعداد نظام التوكن (بدون سؤال تلقائي)
     await setupTokenSystem();
 
-    // 2. تحميل البيانات السابقة (للمشاهدين والمسؤولين)
-    tournamentData = await loadTournamentData();
-    if (Object.keys(tournamentData).length > 0) {
-        applyTournamentData(tournamentData);
-        console.log('✅ تم تحميل النتائج السابقة');
+    // 2. تحميل البيانات السابقة (فقط للمشاهدين)
+    if (!isAdmin) {
+        tournamentData = await loadTournamentData();
+        if (Object.keys(tournamentData).length > 0) {
+            applyTournamentData(tournamentData);
+            console.log('✅ تم تطبيق البيانات السابقة');
+        }
     }
 
     // 3. تشغيل النجوم
@@ -1824,37 +1681,8 @@ async function initializeTournament() {
     // 4. تطبيق الترجمة
     updatePageLanguage();
 
-    // 5. اختبار اتصال GitHub (في الخلفية)
-    setTimeout(testGitHubConnection, 1000);
-}
-
-// ====== نظام التوكن الذكي ======
-async function setupTokenSystem() {
-    console.log('🔐 بدء نظام المصادقة...');
-
-    try {
-        const response = await fetch('token.html');
-        if (response.ok) {
-            const text = await response.text();
-            const tokenMatch = text.match(/GITHUB_TOKEN:\s*['"]([^'"]+)['"]/);
-
-            if (tokenMatch && tokenMatch[1]) {
-                GITHUB_TOKEN = tokenMatch[1];
-                isAdmin = true;
-                console.log('✅ تم تحميل التوكن من token.html');
-                updateAdminStatus(true);
-                addControlButtons();
-                addResetButton();
-                return true;
-            }
-        }
-    } catch (error) {
-        console.log('ℹ️ token.html غير متوفر');
-    }
-
-    updateAdminStatus(false);
-    addAdminButton();
-    return false;
+    // 5. اختبار اتصال GitHub
+    setTimeout(testGitHubConnection, 2000);
 }
 
 // ====== تشغيل عند تحميل الصفحة ======
@@ -1895,23 +1723,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (label) s.setAttribute('aria-label', label.innerText || 'slot');
     });
 });
-
-// ====== تنبيه عند مغادرة الصفحة ======
-window.addEventListener('beforeunload', function(e) {
-    if (hasChanges && isAdmin) {
-        e.preventDefault();
-        e.returnValue = 'لديك تغييرات غير محفوظة! هل تريد المغادرة؟';
-        return e.returnValue;
-    }
-});
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
