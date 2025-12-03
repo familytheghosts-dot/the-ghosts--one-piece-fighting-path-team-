@@ -951,7 +951,7 @@ function addAdminButton() {
     if (oldButton) {
         oldButton.remove();
     }
-    
+
     // إنشاء زر جديد فقط إذا لم يكن المستخدم مسؤولاً
     if (!isAdmin) {
         const adminButton = document.createElement('div');
@@ -972,7 +972,7 @@ function addAdminButton() {
                     display: inline-flex;
                     align-items: center;
                     gap: 12px;
-                " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 0 35px rgba(255, 152, 0, 0.6)'" 
+                " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 0 35px rgba(255, 152, 0, 0.6)'"
                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 0 25px rgba(255, 152, 0, 0.4)'">
                     <span style="font-size: 22px;">🔑</span>
                     <span>أنا مسؤول البطولة</span>
@@ -982,7 +982,7 @@ function addAdminButton() {
                 </div>
             </div>
         `;
-        
+
         // إضافة الزر بعد الفوتر مباشرة
         const footerBox = document.querySelector('.footer-box');
         if (footerBox) {
@@ -990,7 +990,7 @@ function addAdminButton() {
         } else {
             document.body.appendChild(adminButton);
         }
-        
+
         // إضافة حدث النقر على الزر
         setTimeout(() => {
             const btn = document.getElementById('becomeAdminBtn');
@@ -1006,12 +1006,12 @@ async function handleAdminAccess() {
     const userIsAdmin = confirm('🔐 نظام البطولة\n\nهل أنت مسؤول البطولة؟\n\n' +
                                '• نعم: سأطلب منك التوكن لتحديد الفائزين\n' +
                                '• لا: يمكنك مشاهدة النتائج فقط');
-    
+
     if (!userIsAdmin) {
         alert('👋 أهلاً بك! يمكنك مشاهدة نتائج البطولة.\nلتحديث النتائج، اتصل بمسؤول البطولة.');
         return;
     }
-    
+
     // طلب التوكن من المسؤول
     const userToken = prompt(`🎮 أدخل GitHub Token:
 
@@ -1025,7 +1025,7 @@ async function handleAdminAccess() {
         addControlButtons();
         removeAdminButton();
         alert('✅ تم تفعيل وضع المسؤول! يمكنك الآن تحديد الفائزين.');
-        
+
         // تحميل البيانات السابقة
         tournamentData = await loadTournamentData();
         if (Object.keys(tournamentData).length > 0) {
@@ -1080,16 +1080,16 @@ function removeAdminButton() {
 // ====== تحديث حالة المسؤول (بعد مربع الروابط) ======
 function updateAdminStatus(admin) {
     let statusElement = document.getElementById('adminStatus');
-    
+
     // إزالة أي عنصر قديم
     if (statusElement) {
         statusElement.remove();
     }
-    
+
     // إنشاء العنصر الجديد
     statusElement = document.createElement('div');
     statusElement.id = 'adminStatus';
-    
+
     // إضافة العنصر بعد الفوتر مباشرة
     const footerBox = document.querySelector('.footer-box');
     if (footerBox) {
@@ -1103,7 +1103,7 @@ function updateAdminStatus(admin) {
     } else {
         document.body.appendChild(statusElement);
     }
-    
+
     if (admin) {
         statusElement.innerHTML = `
             <div style="text-align: center; margin: 40px auto 60px;">
@@ -1569,7 +1569,7 @@ function addControlButtons() {
                     transition: 0.3s;
                     min-width: 170px;
                     box-shadow: 0 4px 15px rgba(0, 200, 80, 0.4);
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 200, 80, 0.6)'" 
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 200, 80, 0.6)'"
                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0, 200, 80, 0.4)'">
                     💾 حفظ للجميع
                 </button>
@@ -1586,7 +1586,7 @@ function addControlButtons() {
                     transition: 0.3s;
                     min-width: 170px;
                     box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(33, 150, 243, 0.6)'" 
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(33, 150, 243, 0.6)'"
                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(33, 150, 243, 0.4)'">
                     🔄 تحديث
                 </button>
@@ -1603,7 +1603,7 @@ function addControlButtons() {
                     transition: 0.3s;
                     min-width: 170px;
                     box-shadow: 0 4px 15px rgba(255, 82, 82, 0.4);
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255, 82, 82, 0.6)'" 
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255, 82, 82, 0.6)'"
                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255, 82, 82, 0.4)'">
                     🚪 خروج
                 </button>
@@ -1614,7 +1614,7 @@ function addControlButtons() {
     // إضافة الأزرار بعد زر المسؤول أو بعد الفوتر
     const adminStatus = document.getElementById('adminStatus');
     const adminButton = document.getElementById('adminAccessButton');
-    
+
     if (adminStatus) {
         adminStatus.insertAdjacentHTML('beforebegin', controlsHTML);
     } else if (adminButton) {
@@ -1634,7 +1634,7 @@ async function testGitHubConnection() {
     console.log('🔗 اختبار اتصال GitHub...');
     console.log('المالك:', REPO_OWNER);
     console.log('المستودع:', REPO_NAME);
-    
+
     try {
         const response = await fetch(
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`,
@@ -1645,7 +1645,7 @@ async function testGitHubConnection() {
                 } : {}
             }
         );
-        
+
         if (response.ok) {
             console.log('✅ المستودع موجود!');
             return true;
