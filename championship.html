@@ -908,535 +908,12 @@ body {
 <div class="footer-box">
     <div class="footer-title" data-ar="لكل من يريد إنقاذ لوفي فليقم بالإنضمام لنا" data-zh="想要拯救路飞的人，请加入我们">For those who want to save Luffy, join us</div>
     <div class="footer-links">
-        <a href="https://t.me/theghostsOPFPchat" class="footer-link" target="_blank" data-ar="تيليجرام" data-zh="Telegram">Telegram</a>
-        <a href="https://youtube.com/@theghosts-ofpt?si=5hOJg9CpC6HBidZn" class="footer-link" target="_blank" data-ar="يوتيوب" data-zh="YouTube">YouTube</a>
-        <a href="https://t.me/theghostsOPF" class="footer-link" target="_blank" data-ar="تيليجرام" data-zh="Telegram">Telegram</a>
+        <a href="https://t.me/your-telegram-link" class="footer-link" target="_blank" data-ar="تيليجرام" data-zh="Telegram">Telegram</a>
+        <a href="https://youtube.com/your-youtube-link" class="footer-link" target="_blank" data-ar="يوتيوب" data-zh="YouTube">YouTube</a>
     </div>
 </div>
 
 <script>
-// ====== نظام البطولة الكامل ======
-
-// ====== المتغيرات الأساسية ======
-let GITHUB_TOKEN = '';
-let isAdmin = false;
-const REPO_OWNER = 'familytheghosts-dot';
-const REPO_NAME = 'the-ghosts--one-piece-fighting-path-team-';
-let tournamentData = {};
-
-// ====== خريطة اللاعبين ======
-const playerImages = {
-    "ياسر": "images/botola1.webp",
-    "اللاعب الثالت": "images/botola2.webp",
-    "اللاعب الثالني": "images/botola3.webp",
-    "اللاعب الرابع": "images/botola4.webp",
-    "اللاعب الخامس": "images/botola5.webp",
-    "اللاعب السادس": "images/botola7.webp",
-    "اللاعب السابع": "images/botola6.webp",
-    "اللاعب الثامن": "images/botola8.webp",
-    "اللاعب 9": "images/botola9.webp",
-    "اللاعب 10": "images/botola11.webp",
-    "اللاعب 11": "images/botola10.webp",
-    "اللاعب 12": "images/botola12.webp",
-    "اللاعب 13": "images/botola13.webp",
-    "اللاعب 14": "images/botola15.webp",
-    "اللاعب 15": "images/botola16.webp",
-    "اللاعب 16": "images/botola14.webp"
-};
-
-// ====== زر "أنا المسؤول" في الأسفل ======
-function addAdminButton() {
-    // إزالة الزر القديم إذا كان موجوداً
-    const oldButton = document.getElementById('adminAccessButton');
-    if (oldButton) {
-        oldButton.remove();
-    }
-    
-    // إنشاء زر جديد فقط إذا لم يكن المستخدم مسؤولاً
-    if (!isAdmin) {
-        const adminButton = document.createElement('div');
-        adminButton.id = 'adminAccessButton';
-        adminButton.innerHTML = `
-            <div style="text-align: center; margin: 40px auto;">
-                <button id="becomeAdminBtn" style="
-                    background: linear-gradient(45deg, #ff9800, #ff5722);
-                    color: white;
-                    padding: 14px 35px;
-                    border: none;
-                    border-radius: 25px;
-                    font-size: 18px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: 0.3s;
-                    box-shadow: 0 0 25px rgba(255, 152, 0, 0.4);
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 12px;
-                " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 0 35px rgba(255, 152, 0, 0.6)'" 
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 0 25px rgba(255, 152, 0, 0.4)'">
-                    <span style="font-size: 22px;">🔑</span>
-                    <span>أنا مسؤول البطولة</span>
-                </button>
-                <div style="color: #aaa; font-size: 14px; margin-top: 10px;">
-                    فقط للمسؤولين الذين يملكون صلاحية تحديد الفائزين
-                </div>
-            </div>
-        `;
-        
-        // إضافة الزر بعد الفوتر مباشرة
-        const footerBox = document.querySelector('.footer-box');
-        if (footerBox) {
-            footerBox.parentNode.insertBefore(adminButton, footerBox.nextSibling);
-        } else {
-            document.body.appendChild(adminButton);
-        }
-        
-        // إضافة حدث النقر على الزر
-        setTimeout(() => {
-            const btn = document.getElementById('becomeAdminBtn');
-            if (btn) {
-                btn.addEventListener('click', handleAdminAccess);
-            }
-        }, 100);
-    }
-}
-
-// ====== التعامل مع طلب الوصول كمسؤول ======
-async function handleAdminAccess() {
-    const userIsAdmin = confirm('🔐 نظام البطولة\n\nهل أنت مسؤول البطولة؟\n\n' +
-                               '• نعم: سأطلب منك التوكن لتحديد الفائزين\n' +
-                               '• لا: يمكنك مشاهدة النتائج فقط');
-    
-    if (!userIsAdmin) {
-        alert('👋 أهلاً بك! يمكنك مشاهدة نتائج البطولة.\nلتحديث النتائج، اتصل بمسؤول البطولة.');
-        return;
-    }
-    
-    // طلب التوكن من المسؤول
-    const userToken = prompt(`🎮 أدخل GitHub Token:
-
-التوكن يبدأ بـ ghp_
-انسخ التوكن من GitHub والصقه هنا:`);
-
-    if (userToken && (userToken.trim().startsWith('ghp_') || userToken.trim().startsWith('github_pat_'))) {
-        GITHUB_TOKEN = userToken.trim();
-        isAdmin = true;
-        updateAdminStatus(true);
-        addControlButtons();
-        removeAdminButton();
-        alert('✅ تم تفعيل وضع المسؤول! يمكنك الآن تحديد الفائزين.');
-        
-        // تحميل البيانات السابقة
-        tournamentData = await loadTournamentData();
-        if (Object.keys(tournamentData).length > 0) {
-            applyTournamentData(tournamentData);
-            console.log('✅ تم تطبيق البيانات السابقة');
-        }
-    } else if (userToken) {
-        alert('❌ التوكن غير صالح. يجب أن يبدأ بـ ghp_ أو github_pat_');
-    } else {
-        alert('⚠️ تم الإلغاء. ستشاهد البطولة فقط.');
-    }
-}
-
-// ====== نظام التوكن الذكي (بدون سؤال تلقائي) ======
-async function setupTokenSystem() {
-    console.log('🔐 بدء نظام المصادقة...');
-
-    // 1. محاولة قراءة token.html (إن وجد على جهاز المستخدم)
-    try {
-        const response = await fetch('token.html');
-        if (response.ok) {
-            const text = await response.text();
-            const tokenMatch = text.match(/GITHUB_TOKEN:\s*['"]([^'"]+)['"]/);
-
-            if (tokenMatch && tokenMatch[1]) {
-                GITHUB_TOKEN = tokenMatch[1];
-                isAdmin = true;
-                console.log('✅ تم تحميل التوكن من token.html');
-                updateAdminStatus(true);
-                addControlButtons();
-                return true;
-            }
-        }
-    } catch (error) {
-        console.log('ℹ️ token.html غير متوفر');
-    }
-
-    // 2. لا نسأل المستخدم تلقائياً، نعرض زر المسؤول فقط
-    updateAdminStatus(false);
-    addAdminButton();
-    return false;
-}
-
-// ====== إزالة زر المسؤول عند التحول إلى مسؤول ======
-function removeAdminButton() {
-    const adminButton = document.getElementById('adminAccessButton');
-    if (adminButton) {
-        adminButton.remove();
-    }
-}
-
-// ====== تحديث حالة المسؤول (بعد مربع الروابط) ======
-function updateAdminStatus(admin) {
-    let statusElement = document.getElementById('adminStatus');
-    
-    // إزالة أي عنصر قديم
-    if (statusElement) {
-        statusElement.remove();
-    }
-    
-    // إنشاء العنصر الجديد
-    statusElement = document.createElement('div');
-    statusElement.id = 'adminStatus';
-    
-    // إضافة العنصر بعد الفوتر مباشرة
-    const footerBox = document.querySelector('.footer-box');
-    if (footerBox) {
-        // إضافة مربع المسؤول بعد زر المسؤول أو بعد الفوتر
-        const adminButton = document.getElementById('adminAccessButton');
-        if (adminButton) {
-            adminButton.parentNode.insertBefore(statusElement, adminButton.nextSibling);
-        } else {
-            footerBox.parentNode.insertBefore(statusElement, footerBox.nextSibling);
-        }
-    } else {
-        document.body.appendChild(statusElement);
-    }
-    
-    if (admin) {
-        statusElement.innerHTML = `
-            <div style="text-align: center; margin: 40px auto 60px;">
-                <div style="
-                    display: inline-block;
-                    padding: 18px 35px;
-                    background: linear-gradient(135deg, rgba(0, 100, 0, 0.2), rgba(0, 50, 0, 0.3));
-                    border: 2px solid #00ff00;
-                    color: #00ff00;
-                    border-radius: 12px;
-                    font-weight: bold;
-                    font-size: 17px;
-                    text-align: center;
-                    box-shadow: 0 0 30px rgba(0, 255, 0, 0.25),
-                                inset 0 0 20px rgba(0, 255, 0, 0.1);
-                    max-width: 500px;
-                    width: 90%;
-                ">
-                    <div style="font-size: 24px; margin-bottom: 8px;">👑</div>
-                    <div style="font-weight: bold; font-size: 20px; margin-bottom: 5px;">وضع المسؤول</div>
-                    <div style="font-size: 15px; margin-top: 8px; color: #aaffaa;">
-                        يمكنك تحديد الفائزين وتحديث النتائج للجميع
-                    </div>
-                    <div style="font-size: 12px; margin-top: 10px; color: #88ff88; opacity: 0.8;">
-                        ⚡ النتائج تحفظ تلقائياً على GitHub
-                    </div>
-                </div>
-            </div>
-        `;
-    } else {
-        statusElement.innerHTML = `
-            <div style="text-align: center; margin: 40px auto 60px;">
-                <div style="
-                    display: inline-block;
-                    padding: 18px 35px;
-                    background: linear-gradient(135deg, rgba(100, 0, 0, 0.2), rgba(50, 0, 0, 0.3));
-                    border: 2px solid #ff5555;
-                    color: #ffaaaa;
-                    border-radius: 12px;
-                    font-weight: bold;
-                    font-size: 17px;
-                    text-align: center;
-                    box-shadow: 0 0 30px rgba(255, 50, 50, 0.25),
-                                inset 0 0 20px rgba(255, 50, 50, 0.1);
-                    max-width: 500px;
-                    width: 90%;
-                ">
-                    <div style="font-size: 24px; margin-bottom: 8px;">👁️</div>
-                    <div style="font-weight: bold; font-size: 20px; margin-bottom: 5px;">وضع المشاهد</div>
-                    <div style="font-size: 15px; margin-top: 8px; color: #ffaaaa;">
-                        مشاهدة النتائج فقط
-                    </div>
-                    <div style="font-size: 12px; margin-top: 10px; color: #ff8888; opacity: 0.8;">
-                        🔒 لتحديد الفائزين اضغط على زر "أنا مسؤول البطولة"
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-}
-
-// ====== التحقق من صلاحية المسؤول ======
-function requirePassword() {
-    if (isAdmin) return true;
-
-    const becomeAdmin = confirm('❌ تحتاج صلاحيات المسؤول لتحديد الفائزين\n\n' +
-                               'هل تريد التحول لوضع المسؤول؟');
-    if (becomeAdmin) {
-        handleAdminAccess();
-    }
-    return false;
-}
-
-// ====== حفظ البيانات على GitHub ======
-async function saveTournamentData() {
-    if (!GITHUB_TOKEN || !isAdmin) {
-        console.log('⚠️ لا يمكن الحفظ - ليس مسؤولاً');
-        return false;
-    }
-
-    try {
-        // جمع بيانات البطولة
-        const data = {};
-        const slots = document.querySelectorAll('.slot');
-
-        slots.forEach(slot => {
-            const label = slot.querySelector('.label')?.textContent?.trim();
-            if (label && label !== '') {
-                const parentId = slot.closest('[id]')?.id;
-                if (parentId) {
-                    data[parentId] = {
-                        winner: label,
-                        image: playerImages[label] || "",
-                        timestamp: new Date().toISOString()
-                    };
-                }
-            }
-        });
-
-        console.log('💾 جاري حفظ البيانات...', data);
-
-        // البحث عن الـ issue الحالي
-        const issuesResponse = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=tournament-data`,
-            {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            }
-        );
-
-        let issueNumber = null;
-        if (issuesResponse.ok) {
-            const issues = await issuesResponse.json();
-            if (issues.length > 0) {
-                issueNumber = issues[0].number;
-                console.log('📝 تم العثور على issue موجود:', issueNumber);
-            }
-        }
-
-        const requestBody = {
-            title: `🎯 نتائج البطولة - ${new Date().toLocaleDateString('ar-EG')}`,
-            body: `### بيانات البطولة\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``,
-            labels: ['tournament-data']
-        };
-
-        let response;
-        if (issueNumber) {
-            // تحديث issue موجود
-            response = await fetch(
-                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issueNumber}`,
-                {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                }
-            );
-        } else {
-            // إنشاء issue جديد
-            response = await fetch(
-                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                }
-            );
-        }
-
-        if (response.ok) {
-            console.log('✅ تم حفظ النتائج على GitHub');
-            return true;
-        } else {
-            const errorText = await response.text();
-            console.error('❌ فشل في الحفظ:', response.status, errorText);
-
-            // رسائل خطأ مفيدة
-            if (response.status === 401) {
-                alert('❌ التوكن غير صالح أو منتهي الصلاحية');
-            } else if (response.status === 403) {
-                alert('❌ لا تملك الصلاحية لحفظ البيانات');
-            } else if (response.status === 404) {
-                alert('❌ المستودع غير موجود. تأكد من REPO_NAME');
-            }
-
-            return false;
-        }
-    } catch (error) {
-        console.error('❌ خطأ في الاتصال:', error);
-        alert('❌ تعذر الاتصال بـ GitHub. تحقق من الإنترنت');
-        return false;
-    }
-}
-
-// ====== جلب البيانات من GitHub ======
-async function loadTournamentData() {
-    try {
-        console.log('🔄 جاري جلب البيانات من GitHub...');
-        const response = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=tournament-data&state=open`
-        );
-
-        if (response.ok) {
-            const issues = await response.json();
-            if (issues.length > 0) {
-                const latest = issues[0];
-                const body = latest.body;
-                const jsonMatch = body.match(/```json\n([\s\S]*?)\n```/);
-
-                if (jsonMatch) {
-                    const data = JSON.parse(jsonMatch[1]);
-                    console.log('✅ تم تحميل البيانات من GitHub');
-                    return data;
-                }
-            }
-        }
-        console.log('⚠️ لا توجد بيانات سابقة');
-    } catch (error) {
-        console.log('⚠️ خطأ في جلب البيانات:', error);
-    }
-    return {};
-}
-
-// ====== تطبيق البيانات على الواجهة ======
-function applyTournamentData(data) {
-    Object.keys(data).forEach(slotId => {
-        const slotData = data[slotId];
-        if (!slotData || !slotData.winner) return;
-
-        const slotElement = document.getElementById(slotId);
-        if (!slotElement) return;
-
-        const slot = slotElement.querySelector('.slot');
-        if (!slot) return;
-
-        const label = slot.querySelector('.label');
-        const image = slot.querySelector('.side-img');
-
-        if (label) {
-            label.textContent = slotData.winner;
-        }
-
-        if (image && slotData.image) {
-            image.src = slotData.image;
-            image.style.display = 'block';
-            image.style.transform = 'translateY(-50%)';
-        }
-
-        slot.classList.add('active');
-    });
-}
-
-// ====== الدالة الرئيسية لتحديد الفائز ======
-async function secureSelect(clickedSlot, nextRoundId, position) {
-    if (!requirePassword()) return;
-
-    const label = clickedSlot.querySelector(".label").textContent.trim();
-    if (!label || label === '') {
-        alert('⚠️ اختر لاعباً أولاً');
-        return;
-    }
-
-    const imgSrc = playerImages[label] || "";
-
-    // تحديث الواجهة
-    const nextRound = document.getElementById(nextRoundId);
-    if (!nextRound) return;
-
-    const targets = nextRound.querySelectorAll(".slot");
-    const targetSlot = targets[position] || targets[0];
-    if (!targetSlot) return;
-
-    const labelBox = targetSlot.querySelector(".label");
-    const imgBox = targetSlot.querySelector(".side-img");
-
-    if (labelBox) labelBox.textContent = label;
-    if (imgBox) {
-        imgBox.src = imgSrc;
-        imgBox.style.transform = "translateY(-50%)";
-        imgBox.style.display = "block";
-    }
-
-    clickedSlot.classList.add("active");
-
-    // نسخ للجولات المتقدمة
-    if (nextRoundId === "A_B_Winner") {
-        const copyAB2 = document.querySelector("#A_B_Winner2 .slot");
-        if (copyAB2) {
-            const la = copyAB2.querySelector(".label");
-            const im = copyAB2.querySelector(".side-img");
-            if (la) la.textContent = label;
-            if (im) {
-                im.src = imgSrc;
-                im.style.transform = "translateY(-50%)";
-                im.style.display = "block";
-            }
-        }
-    }
-
-    if (nextRoundId === "C_D_Winner") {
-        const copy2 = document.querySelector("#C_D_Winner2 .slot");
-        if (copy2) {
-            const la = copy2.querySelector(".label");
-            const im = copy2.querySelector(".side-img");
-            if (la) la.textContent = label;
-            if (im) {
-                im.src = imgSrc;
-                im.style.transform = "translateY(-50%)";
-                im.style.display = "block";
-            }
-        }
-    }
-
-    // حفظ النتائج على GitHub
-    if (isAdmin && GITHUB_TOKEN) {
-        const success = await saveTournamentData();
-        if (success) {
-            alert(`✅ تم تحديد ${label} فائزاً وتم حفظ النتائج للجميع!`);
-        } else {
-            alert('⚠️ تم التحديد محلياً ولكن تعذر الحفظ على الإنترنت');
-        }
-    }
-}
-
-// ====== تحديد البطل النهائي ======
-async function championSelected(slot) {
-    if (!requirePassword()) return;
-
-    const label = slot.querySelector(".label").textContent.trim();
-    if (!label || label === '') {
-        alert("⚠️ اختر الفائز أولاً من الجولات النهائية");
-        return;
-    }
-
-    slot.classList.add("active");
-    alert(`🎉 مبروك! ${label} هو البطل النهائي!`);
-
-    // حفظ النتيجة النهائية
-    if (isAdmin && GITHUB_TOKEN) {
-        const success = await saveTournamentData();
-        if (success) {
-            alert('✅ تم حفظ النتيجة النهائية للجميع!');
-        }
-    }
-}
-
 // ====== نظام الترجمة ======
 let currentLanguage = 'ar';
 
@@ -1444,6 +921,7 @@ function switchLanguage(lang) {
     currentLanguage = lang;
     updatePageLanguage();
 
+    // تغيير اتجاه الصفحة
     if (lang === 'ar') {
         document.dir = 'rtl';
         document.lang = 'ar';
@@ -1454,6 +932,7 @@ function switchLanguage(lang) {
 }
 
 function updatePageLanguage() {
+    // ترجمة جميع العناصر التي تحتوي على بيانات الترجمة
     const elements = document.querySelectorAll('[data-ar][data-zh]');
     elements.forEach(element => {
         if (currentLanguage === 'ar') {
@@ -1464,235 +943,10 @@ function updatePageLanguage() {
     });
 }
 
-// ====== نظام النجوم المتحركة ======
-const canvas = document.getElementById("starfield");
-const ctx = canvas.getContext("2d");
-let w, h;
-
-function resize() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
-
-const starCount = 700;
-const stars = [];
-
-for (let i = 0; i < starCount; i++) {
-    stars.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        size: Math.random() * 2 + 0.5,
-        speed: Math.random() * 0.4 + 0.1,
-        color: randomNeonColor(),
-        driftX: (Math.random() - 0.5) * 0.3,
-        driftY: (Math.random() - 0.5) * 0.3,
-        flicker: Math.random() * 0.3
-    });
-}
-
-function randomNeonColor() {
-    const neon = [
-        "rgba(0,255,255,",
-        "rgba(0,150,255,",
-        "rgba(255,0,255,"
-    ];
-    return neon[Math.floor(Math.random() * neon.length)];
-}
-
-function animate() {
-    ctx.clearRect(0, 0, w, h);
-
-    for (let s of stars) {
-        let flickerAlpha = 0.5 + Math.sin(Date.now() * 0.002 + s.flicker) * 0.5;
-        ctx.fillStyle = s.color + flickerAlpha + ")";
-
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        s.x += s.driftX;
-        s.y += s.driftY;
-
-        if (s.x < 0) s.x = w;
-        if (s.x > w) s.x = 0;
-        if (s.y < 0) s.y = h;
-        if (s.y > h) s.y = 0;
-    }
-    requestAnimationFrame(animate);
-}
-
-// ====== نظام القصة ======
-function openStory() {
-    document.getElementById("storyModal").style.display = "block";
-}
-
-function closeStory() {
-    document.getElementById("storyModal").style.display = "none";
-}
-
-// ====== إضافة أزرار التحكم (بعد مربع الروابط وقبل حالة المسؤول) ======
-function addControlButtons() {
-    if (!isAdmin) return;
-
-    // إزالة أي أزرار تحكم قديمة
-    const oldControls = document.getElementById('adminControls');
-    if (oldControls) {
-        oldControls.remove();
-    }
-
-    const controlsHTML = `
-        <div id="adminControls" style="
-            text-align: center;
-            margin: 40px auto 20px;
-        ">
-            <div style="
-                display: inline-flex;
-                gap: 15px;
-                padding: 20px;
-                background: linear-gradient(135deg, rgba(0, 20, 40, 0.9), rgba(0, 40, 80, 0.9));
-                border-radius: 20px;
-                border: 2px solid rgba(0, 200, 255, 0.5);
-                box-shadow: 0 0 35px rgba(0, 200, 255, 0.3),
-                            inset 0 0 20px rgba(0, 200, 255, 0.1);
-            ">
-                <button onclick="saveTournamentData()" style="
-                    background: linear-gradient(45deg, #00c853, #64dd17);
-                    color: white;
-                    padding: 14px 28px;
-                    border: none;
-                    border-radius: 20px;
-                    font-size: 16px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: 0.3s;
-                    min-width: 170px;
-                    box-shadow: 0 4px 15px rgba(0, 200, 80, 0.4);
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 200, 80, 0.6)'" 
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0, 200, 80, 0.4)'">
-                    💾 حفظ للجميع
-                </button>
-
-                <button onclick="location.reload()" style="
-                    background: linear-gradient(45deg, #2196F3, #03A9F4);
-                    color: white;
-                    padding: 14px 28px;
-                    border: none;
-                    border-radius: 20px;
-                    font-size: 16px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: 0.3s;
-                    min-width: 170px;
-                    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(33, 150, 243, 0.6)'" 
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(33, 150, 243, 0.4)'">
-                    🔄 تحديث
-                </button>
-
-                <button onclick="localStorage.clear(); location.reload();" style="
-                    background: linear-gradient(45deg, #ff5252, #ff8a80);
-                    color: white;
-                    padding: 14px 28px;
-                    border: none;
-                    border-radius: 20px;
-                    font-size: 16px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: 0.3s;
-                    min-width: 170px;
-                    box-shadow: 0 4px 15px rgba(255, 82, 82, 0.4);
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255, 82, 82, 0.6)'" 
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255, 82, 82, 0.4)'">
-                    🚪 خروج
-                </button>
-            </div>
-        </div>
-    `;
-
-    // إضافة الأزرار بعد زر المسؤول أو بعد الفوتر
-    const adminStatus = document.getElementById('adminStatus');
-    const adminButton = document.getElementById('adminAccessButton');
-    
-    if (adminStatus) {
-        adminStatus.insertAdjacentHTML('beforebegin', controlsHTML);
-    } else if (adminButton) {
-        adminButton.insertAdjacentHTML('afterend', controlsHTML);
-    } else {
-        const footerBox = document.querySelector('.footer-box');
-        if (footerBox) {
-            footerBox.insertAdjacentHTML('afterend', controlsHTML);
-        } else {
-            document.body.insertAdjacentHTML('beforeend', controlsHTML);
-        }
-    }
-}
-
-// ====== اختبار اتصال GitHub ======
-async function testGitHubConnection() {
-    console.log('🔗 اختبار اتصال GitHub...');
-    console.log('المالك:', REPO_OWNER);
-    console.log('المستودع:', REPO_NAME);
-    
-    try {
-        const response = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`,
-            {
-                headers: GITHUB_TOKEN ? {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                } : {}
-            }
-        );
-        
-        if (response.ok) {
-            console.log('✅ المستودع موجود!');
-            return true;
-        } else {
-            console.error('❌ خطأ:', response.status);
-            return false;
-        }
-    } catch (error) {
-        console.error('❌ خطأ في الاتصال:', error);
-        return false;
-    }
-}
-
-// ====== بدء النظام ======
-async function initializeTournament() {
-    console.log('🚀 بدء تشغيل البطولة...');
-
-    // 1. إعداد نظام التوكن (بدون سؤال تلقائي)
-    await setupTokenSystem();
-
-    // 2. تحميل البيانات السابقة (فقط للمشاهدين)
-    if (!isAdmin) {
-        tournamentData = await loadTournamentData();
-        if (Object.keys(tournamentData).length > 0) {
-            applyTournamentData(tournamentData);
-            console.log('✅ تم تطبيق البيانات السابقة');
-        }
-    }
-
-    // 3. تشغيل النجوم
-    animate();
-
-    // 4. تطبيق الترجمة
-    updatePageLanguage();
-
-    // 5. اختبار اتصال GitHub
-    setTimeout(testGitHubConnection, 2000);
-}
-
-// ====== تشغيل عند تحميل الصفحة ======
+// ========================= SLOTS SIZING =========================
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        initializeTournament();
-    }, 500);
-
-    // تعديل حجم السلوطات
     const slots = document.querySelectorAll('.slot');
+
     slots.forEach(function(s) {
         let w = s.getAttribute('data-w');
         let h = s.getAttribute('data-h');
@@ -1723,6 +977,184 @@ document.addEventListener('DOMContentLoaded', function() {
         if (label) s.setAttribute('aria-label', label.innerText || 'slot');
     });
 });
+
+// ========================= SECURITY & UI =========================
+let isAdmin = false;
+function requirePassword() {
+    if (isAdmin) return true;
+    let pass = prompt("أدخل كلمة السر لتحديد الفائز:");
+    if (pass === "adminyassir") {
+        alert("✔ تم السماح لك بتحديد الفائز");
+        isAdmin = true;
+        return true;
+    } else {
+        alert("❌ كلمة السر خاطئة!");
+        return false;
+    }
+}
+
+// ========== player images mapping ==========
+let playerImages = {
+    "ياسر": "images/botola1.webp",
+    "اللاعب الثالت": "images/botola2.webp",
+    "اللاعب الثالني": "images/botola3.webp",
+    "اللاعب الرابع": "images/botola4.webp",
+    "اللاعب الخامس": "images/botola5.webp",
+    "اللاعب السادس": "images/botola7.webp",
+    "اللاعب السابع": "images/botola6.webp",
+    "اللاعب الثامن": "images/botola8.webp",
+    "اللاعب 9": "images/botola9.webp",
+    "اللاعب 10": "images/botola11.webp",
+    "اللاعب 11": "images/botola10.webp",
+    "اللاعب 12": "images/botola12.webp",
+    "اللاعب 13": "images/botola13.webp",
+    "اللاعب 14": "images/botola15.webp",
+    "اللاعب 15": "images/botola16.webp",
+    "اللاعب 16": "images/botola14.webp"
+};
+
+// ========== MAIN SELECTION FUNCTION ==========
+function secureSelect(slot, nextRoundId, position) {
+    if (!isAdmin && !requirePassword()) return;
+
+    let label = slot.querySelector(".label").textContent.trim();
+    if (!label) return;
+
+    let imgSrc = playerImages[label] || "";
+
+    let nextRound = document.getElementById(nextRoundId);
+    if (!nextRound) return;
+    let targets = nextRound.querySelectorAll(".slot");
+    let targetSlot = targets[position] || targets[0];
+    if (!targetSlot) return;
+
+    // set name and image safely
+    let labelBox = targetSlot.querySelector(".label");
+    let imgBox = targetSlot.querySelector(".side-img");
+    if (labelBox) labelBox.textContent = label;
+    if (imgBox) {
+        imgBox.src = imgSrc;
+        imgBox.style.transform = "translateY(-50%)";
+    }
+
+    // إضافة تأثير active
+    slot.classList.add("active");
+
+    // copy to A_B_Winner2 or C_D_Winner2 if relevant
+    if (nextRoundId === "A_B_Winner") {
+        let copyAB2 = document.querySelector("#A_B_Winner2 .slot");
+        if (copyAB2) {
+            let la = copyAB2.querySelector(".label");
+            let im = copyAB2.querySelector(".side-img");
+            if (la) la.textContent = label;
+            if (im) {
+                im.src = imgSrc;
+                im.style.transform = "translateY(-50%)";
+            }
+        }
+    }
+    if (nextRoundId === "C_D_Winner") {
+        let copy2 = document.querySelector("#C_D_Winner2 .slot");
+        if (copy2) {
+            let la = copy2.querySelector(".label");
+            let im = copy2.querySelector(".side-img");
+            if (la) la.textContent = label;
+            if (im) {
+                im.src = imgSrc;
+                im.style.transform = "translateY(-50%)";
+            }
+        }
+    }
+}
+
+// ========== CHAMPION SELECTION FUNCTION ==========
+function championSelected(slot) {
+    if (!isAdmin && !requirePassword()) return;
+
+    let label = slot.querySelector(".label").textContent.trim();
+    if (!label) {
+        alert("⚠️ اختر الفائز أولاً من A_B_Winner2 أو C_D_Winner2");
+        return;
+    }
+
+    // إضافة تأثير active
+    slot.classList.add("active");
+
+    alert("🎉 مبروك! " + label + " هو البطل!");
+}
+
+// ========================= STARFIELD =========================
+const canvas = document.getElementById("starfield");
+const ctx = canvas.getContext("2d");
+
+let w, h;
+function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+// إنشاء نجوم كثيرة جداً
+const starCount = 700;
+const stars = [];
+
+for (let i = 0; i < starCount; i++) {
+    stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: Math.random() * 2 + 0.5,
+        speed: Math.random() * 0.4 + 0.1,
+        color: randomNeonColor(),
+        driftX: (Math.random() - 0.5) * 0.3,
+        driftY: (Math.random() - 0.5) * 0.3,
+        flicker: Math.random() * 0.3
+    });
+}
+
+// ألوان نيون
+function randomNeonColor() {
+    const neon = [
+        "rgba(0,255,255,",   // أزرق سماوي نيون
+        "rgba(0,150,255,",   // أزرق غامق نيون
+        "rgba(255,0,255,"    // بنفسجي نيون
+    ];
+    return neon[Math.floor(Math.random() * neon.length)];
+}
+
+function animate() {
+    ctx.clearRect(0, 0, w, h);
+
+    for (let s of stars) {
+        let flickerAlpha = 0.5 + Math.sin(Date.now() * 0.002 + s.flicker) * 0.5;
+        ctx.fillStyle = s.color + flickerAlpha + ")";
+
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // الحركة العشوائية
+        s.x += s.driftX;
+        s.y += s.driftY;
+
+        // تعويض النجوم التي تخرج عن الشاشة
+        if (s.x < 0) s.x = w;
+        if (s.x > w) s.x = 0;
+        if (s.y < 0) s.y = h;
+        if (s.y > h) s.y = 0;
+    }
+    requestAnimationFrame(animate);
+}
+animate();
+
+// ========================= STORY MODAL =========================
+function openStory() {
+    document.getElementById("storyModal").style.display = "block";
+}
+
+function closeStory() {
+    document.getElementById("storyModal").style.display = "none";
+}
 </script>
 
 </body>
