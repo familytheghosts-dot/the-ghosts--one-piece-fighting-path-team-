@@ -690,7 +690,7 @@ body {
 
 <header>
     <div class="header-inner">
-        <div class="left-nav"><a href="index.html" data-ar="home" data-zh="主页">home</a></div>
+        <div class="left-nav"><a href="index2.html" data-ar="home" data-zh="主页">home</a></div>
         <div class="ecg" aria-hidden="true">
             <svg viewBox="0 0 1000 40" preserveAspectRatio="none">
                 <path class="ecg-glow" d="M0,20 L80,20 L100,20 L120,20 L150,20 L170,20 L190,20 L210,20 L230,20 L250,20 L300,20 L330,8 L350,30 L380,20 L420,20 L470,20 L500,20 L540,20 L560,20 L590,20 L620,20 L640,20 L660,20 L720,20 L750,20 L780,7 L800,33 L820,20 L920,20 L1000,20" />
@@ -712,35 +712,32 @@ body {
 <div class="stars2"></div>
 <div class="stars3"></div>
 <!-- المجموعة A -->
-<div class="group-title" data-ar="المجموعة A" data-zh="A组">...</div>
+<div class="group-title" data-ar="المجموعة A" data-zh="A组">المجموعة A</div>
 
 <div class="level" id="A_round4">
-    <!-- المباراة 1 -->
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'A_round2', 0)">
-        <span class="label">gh sanji</span>
-        <img src="images/botola1.webp" class="side-img">
+    <div class="slot" id="p1" onclick="if(requirePassword()) secureSelect(this, 'A_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'A_round2', 0)">
-        <span class="label">gh white</span>
-        <img src="images/botola3.webp" class="side-img">
+    <div class="slot" id="p2" onclick="if(requirePassword()) secureSelect(this, 'A_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
 
-    <!-- المباراة 2 -->
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'E_round2', 0)">
-        <span class="label">ayoub troy</span>
-        <img src="images/botola2.webp" class="side-img">
+    <div class="slot" id="p3" onclick="if(requirePassword()) secureSelect(this, 'E_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'E_round2', 0)">
-        <span class="label">A7MED</span>
-        <img src="images/botola4.webp" class="side-img">
+    <div class="slot" id="p4" onclick="if(requirePassword()) secureSelect(this, 'E_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
 </div>
 
-<!-- A_round2 و E_round2 جنباً إلى جنب -->
 <div class="level" id="round2_container">
     <div class="mid-round" id="A_round2">
         <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'A_final', 0)">
@@ -787,7 +784,6 @@ body {
 
 </div>
 
-<!-- B_round2 و F_round2 جنباً إلى جنب -->
 <div class="level" id="round2_container_B">
     <div class="mid-round" id="B_round2">
         <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'B_final', 0)">
@@ -806,29 +802,26 @@ body {
     </div>
 </div>
 
-<!-- المجموعة B - الجولة الأولى -->
 <div class="level" id="B_round4">
-    <!-- المباراة 1: اللاعب الخامس vs اللاعب السادس -->
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'B_round2', 0)">
-        <span class="label">gh adam</span>
-        <img src="images/botola5.webp" class="side-img">
+    <div class="slot" id="p5" onclick="if(requirePassword()) secureSelect(this, 'B_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'B_round2', 0)">
-        <span class="label">gh duffy</span>
-        <img src="images/botola7.webp" class="side-img">
+    <div class="slot" id="p6" onclick="if(requirePassword()) secureSelect(this, 'B_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
 
-    <!-- المباراة 2: اللاعب السابع vs اللاعب الثامن -->
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'F_round2', 0)">
-        <span class="label">omer mohammed</span>
-        <img src="images/botola6.webp" class="side-img">
+    <div class="slot" id="p7" onclick="if(requirePassword()) secureSelect(this, 'F_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'F_round2', 0)">
-        <span class="label">semo dragnil</span>
-        <img src="images/botola8.webp" class="side-img">
+    <div class="slot" id="p8" onclick="if(requirePassword()) secureSelect(this, 'F_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
 </div>
@@ -837,20 +830,16 @@ body {
 
 <div class="group-title" data-ar="المجموعة B" data-zh="B组">المجموعة B</div>
 
-<!-- النهائي الكبير -->
 <div class="image-wrapper">
 
-    <!-- الصورة الأولى (الأرض) -->
     <div class="floating-image-box">
-        <img src="images/earth.png" class="floating-image">
+        <img src="https://i.ibb.co/1J7c9Mzg/earth.webp" class="floating-image">
     </div>
 
-    <!-- الصورة الثانية (الدكتور) -->
     <div class="doctor-floating-box">
-        <img src="images/3doctor.png" class="doctor-floating-img">
+        <img src="https://i.ibb.co/chTxcDd2/3doctor.webp" class="doctor-floating-img">
     </div>
 
-    <!-- زر القصة (Story Card) -->
     <div class="story-card-box">
         <div class="story-card" onclick="openStory()">
             <div class="story-card-title" data-ar="لقد تم إرسال رسالة جديدة إليك..." data-zh="您收到了一条新消息...">A new message has been sent to you...</div>
@@ -888,7 +877,6 @@ body {
         <div class="close-modal" onclick="closeStory()">✕</div>
 
         <div class="modal-text">
-            <!-- هنا غادي نحط الرسالة النهائية -->
             <div id="storyText">
                 <p data-ar="أنا فيجابونك." data-zh="我是贝加庞克。">I am Vegapunk.</p>
 
@@ -906,7 +894,7 @@ body {
 
               <p data-ar="خلال بحثنا، وجدنا لعبة في عالمكم تسمى 'ون بيس: فايتنغ بات '،<br>لعبة تسمح للاعبين بفهم الشخصيات والتحكم فيها بدقة كبيرة." data-zh="在我们的研究中，我们在你们的世界发现了一款名为'航海王热血航线'的游戏，<br>这款游戏让玩家能够精确地理解和控制角色。">During our research, we found a game in your world called 'One Piece: Fighting Path',<br>a game that allows players to understand and control characters with great precision.</p>
 
-                <p data-ar="لهذا السبب، أنشأنا ستة عشر بطولة.<br>ستختار كل بطولة فائزاً واحداً.<br>سيتم إرسال هؤلاء الفائزين كأرواح إلى عالم ون بيس الحقيقي.<br>سيأخذ كل واحد منهم السيطرة الكاملة على جسد شخصية." data-zh="因此，我们创建了十六个锦标赛。<br>每个锦标赛将选出一名获胜者。<br>这些获胜者将作为灵魂被送入真实的海贼王世界。<br>每个人将完全控制一个角色的身体。">For this reason, we created sixteen tournaments.<br>Each tournament will choose one winner.<br>These winners will be sent as spirits into the real One Piece world.<br>Each one will take full control of a character's body.</p>
+                <p data-ar="لهذا السبب، أنشأنا ستة عشر بطولة.<br>ستختار كل بطولة فائزاً واحداً.<br>سيتم إرسال هؤلاء الفائزين كأرواح إلى عالم ون بيس الحقيقي.<br>سيأخذ كل واحد منهم السيطرة الكاملة على جسد شخصية." data-zh="因此，我们创建了十六个锦标赛。<br>每个锦标赛将选出一名获胜者。<br>这些获胜者将作为灵魂被送入真实的海贼王世界。<br>每个人将完全控制一个角色的身体。">For this reason, we created sixteen tournaments.<br>Each tournament will choose one winner.<br>These winners will be sent as spirits into the real One Piece world.<br>Each one will take full control of a character's body Burner.</p>
 
                 <p data-ar="أنتم الأمل الأخير..." data-zh="你是最后的希望...">You are the last hope...</p>
             </div>
@@ -914,39 +902,32 @@ body {
     </div>
 </div>
 
-<!-- المجموعة C -->
 <div class="group-title" data-ar="المجموعة C" data-zh="C组">المجموعة C</div>
 
-<!-- المجموعة C -->
-<div class="group-title" data-ar="المجموعة C" data-zh="C组">...</div>
-
 <div class="level" id="C_round4">
-    <!-- المباراة 1 -->
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'C_round2', 0)">
-        <span class="label">imad</span>
-        <img src="images/botola9.webp" class="side-img">
+    <div class="slot" id="p9" onclick="if(requirePassword()) secureSelect(this, 'C_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'C_round2', 0)">
-        <span class="label">hassoon</span>
-        <img src="images/botola11.webp" class="side-img">
+    <div class="slot" id="p10" onclick="if(requirePassword()) secureSelect(this, 'C_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
 
-    <!-- المباراة 2 -->
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'G_round2', 1)">
-        <span class="label">SW</span>
-        <img src="images/botola10.webp" class="side-img">
+    <div class="slot" id="p11" onclick="if(requirePassword()) secureSelect(this, 'G_round2', 1)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'G_round2', 1)">
-        <span class="label">leader</span>
-        <img src="images/botola12.webp" class="side-img">
+    <div class="slot" id="p12" onclick="if(requirePassword()) secureSelect(this, 'G_round2', 1)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
 </div>
 
-<!-- C_round2 و G_round2 جنباً إلى جنب -->
 <div class="level" id="CG_round">
     <div class="mid-round" id="C_round2">
         <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'C_final', 0)">
@@ -993,7 +974,6 @@ body {
 </div>
 
 
-<!-- D_round2 و H_round2 جنباً إلى جنب -->
 <div class="level" id="HD_round">
    <div class="mid-round" id="H_round2">
         <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'D_final', 0)">
@@ -1010,40 +990,33 @@ body {
             <div class="vortex-container"></div>
         </div>
     </div>
-
-
 </div>
 
-
-<!-- المجموعة D -->
-<div class="group-title" data-ar="المجموعة D" data-zh="D组">...</div>
+<div class="group-title" data-ar="المجموعة D" data-zh="D组">المجموعة D</div>
 
 <div class="level" id="D_round4">
-    <!-- المباراة 1 -->
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'H_round2', 0)">
-        <span class="label">thragg</span>
-        <img src="images/botola13.webp" class="side-img">
+    <div class="slot" id="p13" onclick="if(requirePassword()) secureSelect(this, 'H_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'H_round2', 0)">
-        <span class="label">tamim</span>
-        <img src="images/botola15.webp" class="side-img">
+    <div class="slot" id="p14" onclick="if(requirePassword()) secureSelect(this, 'H_round2', 0)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
 
-    <!-- المباراة 2 -->
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'D_round2', 1)">
-        <span class="label">moemen</span>
-        <img src="images/botola16.webp" class="side-img">
+    <div class="slot" id="p15" onclick="if(requirePassword()) secureSelect(this, 'D_round2', 1)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
-    <div class="slot" onclick="if(requirePassword()) secureSelect(this, 'D_round2', 1)">
-        <span class="label">Malek</span>
-        <img src="images/botola14.webp" class="side-img">
+    <div class="slot" id="p16" onclick="if(requirePassword()) secureSelect(this, 'D_round2', 1)">
+        <span class="label"></span>
+        <img src="" class="side-img">
         <div class="vortex-container"></div>
     </div>
 </div>
-
 
 <!-- مربع الروابط في الأسفل -->
 <div class="footer-box">
@@ -1056,8 +1029,7 @@ body {
 </div>
 
 <script>
-
-// ====== نظام البطولة الكامل (معدل ليناسب HTML) ======
+// ====== نظام البطولة الكامل (مع نظام Zoom المتكامل) ======
 
 // ====== المتغيرات الأساسية ======
 let GITHUB_TOKEN = '';
@@ -1067,59 +1039,307 @@ const REPO_NAME = 'the-ghosts--one-piece-fighting-path-team-';
 let tournamentData = {};
 let hasChanges = false;
 
-// ====== خريطة اللاعبين - تم التعديل ليناسب أسماء اللاعبين في HTML ======
-const playerImages = {
-    "gh sanji": "images/botola1.webp",
-    "gh white": "images/botola3.webp",
-    "ayoub troy": "images/botola2.webp",
-    "A7MED": "images/botola4.webp",
-    "gh adam": "images/botola5.webp",
-    "gh duffy": "images/botola7.webp",
-    "omer mohammed": "images/botola6.webp",
-    "semo dragnil": "images/botola8.webp",
-    "imad": "images/botola9.webp",
-    "hassoon": "images/botola11.webp",
-    "SW": "images/botola10.webp",
-    "leader": "images/botola12.webp",
-    "thragg": "images/botola13.webp",
-    "tamim": "images/botola15.webp",
-    "اmoemen": "images/botola16.webp",
-    "malek": "images/botola14.webp"
+// ====== نظام Zoom ======
+let currentZoomedSlot = null;
+let isZoomed = false;
+
+// ====== قاعدة البيانات المركزية - Single Source of Truth ======
+const playersData = {
+    "p1": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p2": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p3": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p4": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p5": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p6": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p7": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p8": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p9": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p10": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p11": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p12": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p13": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p14": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p15": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" },
+    "p16": { name: "Member", img: "https://i.ibb.co/xSsFzW8X/botola.jpg" }
 };
+
+// ====== خريطة الصور المستمدة من قاعدة البيانات ======
+const playerImages = {};
+Object.values(playersData).forEach(player => {
+    playerImages[player.name] = player.img;
+});
 
 // ====== قائمة الجولات الموجودة في HTML ======
 const tournamentRounds = {
-    // المجموعة A
     'A_round4': ['A_round2', 'E_round2'],
     'A_round2': ['A_final'],
     'E_round2': ['A_final'],
     'A_final': ['A_B_Winner'],
-
-    // المجموعة B
     'B_round4': ['B_round2', 'F_round2'],
     'B_round2': ['B_final'],
     'F_round2': ['B_final'],
     'B_final': ['A_B_Winner'],
-
-    // المجموعة C
     'C_round4': ['C_round2', 'G_round2'],
     'C_round2': ['C_final'],
     'G_round2': ['C_final'],
     'C_final': ['C_D_Winner'],
-
-    // المجموعة D
     'D_round4': ['H_round2', 'D_round2'],
     'H_round2': ['D_final'],
     'D_round2': ['D_final'],
     'D_final': ['C_D_Winner'],
-
-    // النهائيات
     'A_B_Winner': ['A_B_Winner2'],
     'C_D_Winner': ['C_D_Winner2'],
     'A_B_Winner2': ['Champion'],
     'C_D_Winner2': ['Champion'],
     'Champion': []
 };
+
+// ====== نظام Zoom - إضافة الأنماط ======
+function addZoomStyles() {
+    const style = document.createElement('style');
+    style.id = 'zoom-styles';
+    style.textContent = `
+        /* تأثير ضباب للخلفية عند التكبير */
+        body.zoomed-mode::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(8px) brightness(0.7);
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9998;
+            pointer-events: none;
+        }
+        
+        /* السلوط المكبر */
+        .slot.zoomed {
+            z-index: 9999 !important;
+            position: relative;
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg) skewY(0deg) scale(1.8) !important;
+            box-shadow: 
+                0 0 60px rgba(255, 200, 0, 0.9),
+                0 0 100px rgba(255, 100, 0, 0.7),
+                inset 0 0 50px rgba(255, 255, 255, 0.3) !important;
+            animation: zoomPulse 2s infinite alternate;
+            border: 3px solid #ffcc00 !important;
+        }
+        
+        /* بقية السلوطات عند التكبير */
+        body.zoomed-mode .slot:not(.zoomed) {
+            opacity: 0.4;
+            filter: blur(2px);
+            transform: perspective(800px) rotateX(12deg) rotateY(35deg) skewY(-5deg) scale(0.9) !important;
+        }
+        
+        @keyframes zoomPulse {
+            0% { box-shadow: 0 0 50px rgba(255, 200, 0, 0.8), 0 0 90px rgba(255, 100, 0, 0.6); }
+            100% { box-shadow: 0 0 70px rgba(255, 220, 0, 1), 0 0 120px rgba(255, 80, 0, 0.8); }
+        }
+        
+        /* تحسين الانتقالات */
+        .slot {
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+        
+        /* زر إغلاق Zoom */
+        .close-zoom-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10000;
+            display: none;
+        }
+        
+        body.zoomed-mode .close-zoom-btn {
+            display: block;
+        }
+        
+        /* تحسين النص عند التكبير */
+        .slot.zoomed .label {
+            font-size: 24px !important;
+            color: #fff !important;
+            text-shadow: 0 0 15px #000 !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// ====== دالة التكبير ======
+function zoomSlot(slot) {
+    if (currentZoomedSlot === slot) {
+        removeZoom();
+        return;
+    }
+    
+    // إزالة التكبير السابق
+    if (currentZoomedSlot) {
+        removeZoom();
+    }
+    
+    // تطبيق التكبير
+    currentZoomedSlot = slot;
+    isZoomed = true;
+    
+    // إضافة الكلاس للجسم
+    document.body.classList.add('zoomed-mode');
+    
+    // إضافة الكلاس للسلوط
+    setTimeout(() => {
+        slot.classList.add('zoomed');
+        
+        // إضافة زر الإغلاق
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'close-zoom-btn';
+        closeBtn.innerHTML = '×';
+        closeBtn.onclick = function(e) {
+            e.stopPropagation();
+            removeZoom();
+        };
+        slot.appendChild(closeBtn);
+        
+        // تمركز السلوط في الشاشة
+        const rect = slot.getBoundingClientRect();
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        slot.style.left = `${(windowWidth/2) - (rect.width/2) - rect.left}px`;
+        slot.style.top = `${(windowHeight/2) - (rect.height/2) - rect.top}px`;
+        
+    }, 50);
+    
+    console.log('🔍 تم تكبير السلوط:', slot.querySelector('.label')?.textContent);
+}
+
+// ====== دالة إزالة التكبير ======
+function removeZoom() {
+    if (!currentZoomedSlot) return;
+    
+    document.body.classList.remove('zoomed-mode');
+    currentZoomedSlot.classList.remove('zoomed');
+    
+    // إزالة زر الإغلاق
+    const closeBtn = currentZoomedSlot.querySelector('.close-zoom-btn');
+    if (closeBtn) closeBtn.remove();
+    
+    // إعادة تعيين الموضع
+    currentZoomedSlot.style.left = '';
+    currentZoomedSlot.style.top = '';
+    
+    currentZoomedSlot = null;
+    isZoomed = false;
+}
+
+// ====== إضافة Zoom إلى جميع السلوطات ======
+function addZoomToAllSlots() {
+    const allSlots = document.querySelectorAll('.slot');
+    
+    allSlots.forEach(slot => {
+        // حفظ الحدث الأصلي
+        const originalClick = slot.onclick;
+        
+        // إضافة حدث جديد
+        slot.addEventListener('click', function(e) {
+            // إذا كان في وضع Zoom، لا تنفذ الحدث الأصلي
+            if (isZoomed && currentZoomedSlot !== this) {
+                e.stopPropagation();
+                return;
+            }
+            
+            // Zoom عند النقر الطويل أو النقر المزدوج
+            const now = Date.now();
+            const lastClick = this.lastClickTime || 0;
+            
+            if (now - lastClick < 300) { // نقر مزدوج
+                e.stopPropagation();
+                zoomSlot(this);
+            } else { // نقر عادي
+                if (!isZoomed) {
+                    // تنفيذ الحدث الأصلي (تحديد الفائز)
+                    if (originalClick) originalClick.call(this, e);
+                }
+            }
+            
+            this.lastClickTime = now;
+        });
+        
+        // إضافة تأثير عند مرور الماوس
+        slot.addEventListener('mouseenter', function() {
+            if (!isZoomed) {
+                this.style.transform = 'perspective(900px) rotateX(12deg) rotateY(22deg) skewY(-4deg) translateY(-6px) scale(1.1)';
+                this.style.zIndex = '100';
+            }
+        });
+        
+        slot.addEventListener('mouseleave', function() {
+            if (!isZoomed && !this.classList.contains('active')) {
+                this.style.transform = 'perspective(800px) rotateX(12deg) rotateY(35deg) skewY(-5deg)';
+                this.style.zIndex = '';
+            }
+        });
+    });
+    
+    // إغلاق Zoom عند النقر خارج السلوط
+    document.addEventListener('click', function(e) {
+        if (isZoomed && !e.target.closest('.slot.zoomed')) {
+            removeZoom();
+        }
+    });
+    
+    // إغلاق Zoom عند ضغط زر Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isZoomed) {
+            removeZoom();
+        }
+    });
+}
+
+// ====== دالة توزيع اللاعبين تلقائياً ======
+function distributePlayers() {
+    console.log('🎮 جاري توزيع اللاعبين...');
+    
+    Object.keys(playersData).forEach(playerId => {
+        const slot = document.getElementById(playerId);
+        if (!slot) {
+            console.warn(`⚠️ لم يتم العثور على العنصر: ${playerId}`);
+            return;
+        }
+        
+        const player = playersData[playerId];
+        const label = slot.querySelector('.label');
+        const img = slot.querySelector('.side-img');
+        
+        if (label) {
+            label.textContent = player.name;
+            label.style.display = 'block';
+        }
+        
+        if (img) {
+            img.src = player.img;
+            img.alt = `صورة ${player.name}`;
+            img.style.display = 'block';
+            img.style.transform = 'translateY(-50%)';
+            
+            img.onerror = function() {
+                console.error(`❌ فشل تحميل صورة: ${player.img}`);
+                this.style.display = 'none';
+            };
+        }
+        
+        console.log(`✅ تم تعبئة ${playerId}: ${player.name}`);
+    });
+    
+    console.log('✅ تم توزيع جميع اللاعبين بنجاح!');
+}
 
 // ====== زر "أنا المسؤول" في الأسفل ======
 function addAdminButton() {
@@ -1190,7 +1410,6 @@ async function handleAdminAccess() {
         addControlButtons();
         removeAdminButton();
 
-        // تحميل البيانات السابقة فوراً
         tournamentData = await loadTournamentData();
         if (Object.keys(tournamentData).length > 0) {
             applyTournamentData(tournamentData);
@@ -1206,13 +1425,11 @@ async function handleAdminAccess() {
     }
 }
 
-// ====== إزالة زر المسؤول عند التحول إلى مسؤول ======
 function removeAdminButton() {
     const adminButton = document.getElementById('adminAccessButton');
     if (adminButton) adminButton.remove();
 }
 
-// ====== تحديث حالة المسؤول ======
 function updateAdminStatus(admin) {
     let statusElement = document.getElementById('adminStatus');
     if (statusElement) statusElement.remove();
@@ -1294,7 +1511,6 @@ function updateAdminStatus(admin) {
     }
 }
 
-// ====== التحقق من صلاحية المسؤول ======
 function requirePassword() {
     if (isAdmin) return true;
 
@@ -1303,23 +1519,19 @@ function requirePassword() {
     return false;
 }
 
-// ====== حفظ البيانات على GitHub ======
 async function saveTournamentData() {
     if (!GITHUB_TOKEN || !isAdmin) {
         alert('⚠️ لا يمكن الحفظ - ليس مسؤولاً');
         return false;
     }
 
-    // إظهار رسالة تحميل
     const saveBtn = document.querySelector('[onclick="saveTournamentData()"]');
     const originalText = saveBtn ? saveBtn.innerHTML : '';
     if (saveBtn) saveBtn.innerHTML = '⏳ جاري الحفظ...';
 
     try {
-        // جمع بيانات البطولة بشكل صحيح
         const data = {};
 
-        // فقط الجولات التي يجب أن تحتوي على فائزين
         const validRounds = [
             'A_round2', 'E_round2', 'B_round2', 'F_round2',
             'C_round2', 'G_round2', 'D_round2', 'H_round2',
@@ -1346,14 +1558,12 @@ async function saveTournamentData() {
             }
         });
 
-        // التحقق من وجود بيانات
         if (Object.keys(data).length === 0) {
             alert('⚠️ لا توجد بيانات لحفظها');
             if (saveBtn) saveBtn.innerHTML = originalText;
             return false;
         }
 
-        // البحث عن الـ issue الحالي
         const issuesResponse = await fetch(
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=tournament-data&state=open`,
             {
@@ -1380,7 +1590,6 @@ async function saveTournamentData() {
 
         let response;
         if (issueNumber) {
-            // تحديث issue موجود
             response = await fetch(
                 `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issueNumber}`,
                 {
@@ -1393,7 +1602,6 @@ async function saveTournamentData() {
                 }
             );
         } else {
-            // إنشاء issue جديد
             response = await fetch(
                 `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`,
                 {
@@ -1450,7 +1658,6 @@ async function saveTournamentData() {
     }
 }
 
-// ====== جلب البيانات من GitHub ======
 async function loadTournamentData() {
     try {
         console.log('🔄 جاري جلب البيانات من GitHub...');
@@ -1488,7 +1695,6 @@ async function loadTournamentData() {
     return {};
 }
 
-// ====== تطبيق البيانات على الواجهة ======
 function applyTournamentData(data) {
     if (!data || Object.keys(data).length === 0) {
         console.log('⚠️ لا توجد بيانات لتطبيقها');
@@ -1497,7 +1703,6 @@ function applyTournamentData(data) {
 
     let appliedCount = 0;
 
-    // تطبيق البيانات فقط على الجولات الصحيحة
     Object.keys(data).forEach(roundId => {
         const slotData = data[roundId];
         if (!slotData || !slotData.winner) return;
@@ -1514,11 +1719,13 @@ function applyTournamentData(data) {
 
             if (label && slotData.winner) {
                 label.textContent = slotData.winner;
+                label.style.display = 'block';
                 appliedCount++;
             }
 
             if (image && slotData.image) {
                 image.src = slotData.image;
+                image.alt = `صورة ${slotData.winner}`;
                 image.style.display = 'block';
                 image.style.transform = 'translateY(-50%)';
             }
@@ -1530,7 +1737,6 @@ function applyTournamentData(data) {
     console.log(`✅ تم تطبيق ${appliedCount} نتيجة من GitHub`);
 }
 
-// ====== إعادة تعيين البطولة بالكامل ======
 async function resetTournament() {
     if (!isAdmin || !GITHUB_TOKEN) {
         alert('❌ تحتاج صلاحيات المسؤول لإعادة التعيين');
@@ -1546,7 +1752,6 @@ async function resetTournament() {
         const originalText = resetBtn ? resetBtn.innerHTML : '';
         if (resetBtn) resetBtn.innerHTML = '⏳ جاري إعادة التعيين...';
 
-        // إغلاق issues على GitHub
         const issuesResponse = await fetch(
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=tournament-data`,
             {
@@ -1579,10 +1784,8 @@ async function resetTournament() {
             }
         }
 
-        // إعادة تعيين الواجهة
         resetLocalTournament();
 
-        // مسح البيانات المحلية
         localStorage.removeItem('tournamentData');
         tournamentData = {};
         hasChanges = false;
@@ -1607,9 +1810,7 @@ async function resetTournament() {
     }
 }
 
-// ====== إعادة تعيين الواجهة محلياً ======
 function resetLocalTournament() {
-    // قائمة الجولات التي يجب إعادة تعيينها
     const roundsToReset = [
         'A_round2', 'E_round2', 'B_round2', 'F_round2',
         'C_round2', 'G_round2', 'D_round2', 'H_round2',
@@ -1627,7 +1828,10 @@ function resetLocalTournament() {
                 slot.classList.remove('active');
 
                 const label = slot.querySelector('.label');
-                if (label) label.textContent = '';
+                if (label) {
+                    label.textContent = '';
+                    label.style.display = 'none';
+                }
 
                 const img = slot.querySelector('.side-img');
                 if (img) {
@@ -1641,7 +1845,6 @@ function resetLocalTournament() {
     console.log('✅ تمت إعادة تعيين الواجهة محلياً');
 }
 
-// ====== الدالة الرئيسية لتحديد الفائز ======
 async function secureSelect(clickedSlot, nextRoundId, position) {
     if (!requirePassword()) return;
 
@@ -1651,9 +1854,18 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
         return;
     }
 
-    const imgSrc = playerImages[label] || "";
+    let winnerImg = "";
+    for (const playerId in playersData) {
+        if (playersData[playerId].name === label) {
+            winnerImg = playersData[playerId].img;
+            break;
+        }
+    }
 
-    // تحديث الواجهة
+    if (!winnerImg) {
+        winnerImg = playerImages[label] || "";
+    }
+
     const nextRound = document.getElementById(nextRoundId);
     if (!nextRound) {
         console.error(`❌ الجولة ${nextRoundId} غير موجودة`);
@@ -1669,37 +1881,51 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
     const targetSlot = targets[position] || targets[0];
     if (!targetSlot) return;
 
-    // إزالة active من جميع السلوطات في هذه الجولة أولاً
     targets.forEach(s => s.classList.remove('active'));
 
     const labelBox = targetSlot.querySelector(".label");
     const imgBox = targetSlot.querySelector(".side-img");
 
-    if (labelBox) labelBox.textContent = label;
+    if (labelBox) {
+        labelBox.textContent = label;
+        labelBox.style.display = 'block';
+    }
+    
     if (imgBox) {
-        imgBox.src = imgSrc;
+        imgBox.src = winnerImg;
+        imgBox.alt = `صورة ${label}`;
         imgBox.style.transform = "translateY(-50%)";
         imgBox.style.display = "block";
+        
+        imgBox.onerror = function() {
+            console.error(`❌ فشل تحميل صورة الفائز: ${winnerImg}`);
+            this.style.display = 'none';
+        };
     }
-
-    // ✅ لا تضيف active للجولة الأولى (محجوزة دائماً)
-    // clickedSlot.classList.add("active");
 
     targetSlot.classList.add("active");
     hasChanges = true;
 
-    // نسخ للجولات المتقدمة
     if (nextRoundId === "A_B_Winner") {
         const copySlot = document.querySelector("#A_B_Winner2 .slot");
         if (copySlot) {
             const copyLabel = copySlot.querySelector(".label");
             const copyImg = copySlot.querySelector(".side-img");
 
-            if (copyLabel) copyLabel.textContent = label;
+            if (copyLabel) {
+                copyLabel.textContent = label;
+                copyLabel.style.display = 'block';
+            }
             if (copyImg) {
-                copyImg.src = imgSrc;
+                copyImg.src = winnerImg;
+                copyImg.alt = `صورة ${label}`;
                 copyImg.style.transform = "translateY(-50%)";
                 copyImg.style.display = "block";
+                
+                copyImg.onerror = function() {
+                    console.error(`❌ فشل تحميل صورة النسخة: ${winnerImg}`);
+                    this.style.display = 'none';
+                };
             }
 
             copySlot.classList.add("active");
@@ -1712,18 +1938,26 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
             const copyLabel = copySlot.querySelector(".label");
             const copyImg = copySlot.querySelector(".side-img");
 
-            if (copyLabel) copyLabel.textContent = label;
+            if (copyLabel) {
+                copyLabel.textContent = label;
+                copyLabel.style.display = 'block';
+            }
             if (copyImg) {
-                copyImg.src = imgSrc;
+                copyImg.src = winnerImg;
+                copyImg.alt = `صورة ${label}`;
                 copyImg.style.transform = "translateY(-50%)";
                 copyImg.style.display = "block";
+                
+                copyImg.onerror = function() {
+                    console.error(`❌ فشل تحميل صورة النسخة: ${winnerImg}`);
+                    this.style.display = 'none';
+                };
             }
 
             copySlot.classList.add("active");
         }
     }
 
-    // حفظ النتائج على GitHub (اختياري)
     if (isAdmin && GITHUB_TOKEN) {
         const autoSave = confirm(`🎮 تم تحديد ${label} فائزاً\n\nهل تريد حفظ النتيجة للجميع الآن؟`);
         if (autoSave) {
@@ -1734,7 +1968,6 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
     }
 }
 
-// ====== تحديد البطل النهائي ======
 async function championSelected(slot) {
     if (!requirePassword()) return;
 
@@ -1744,7 +1977,6 @@ async function championSelected(slot) {
         return;
     }
 
-    // إزالة active من جميع السلوطات في Champion
     document.querySelectorAll('#Champion .slot').forEach(s => s.classList.remove('active'));
 
     slot.classList.add("active");
@@ -1757,7 +1989,6 @@ async function championSelected(slot) {
     }
 }
 
-// ====== نظام الترجمة ======
 let currentLanguage = 'ar';
 
 function switchLanguage(lang) {
@@ -1784,7 +2015,6 @@ function updatePageLanguage() {
     });
 }
 
-// ====== نظام النجوم المتحركة ======
 const canvas = document.getElementById("starfield");
 const ctx = canvas.getContext("2d");
 let w, h;
@@ -1843,7 +2073,6 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-// ====== نظام القصة ======
 function openStory() {
     document.getElementById("storyModal").style.display = "block";
 }
@@ -1852,7 +2081,6 @@ function closeStory() {
     document.getElementById("storyModal").style.display = "none";
 }
 
-// ====== إضافة أزرار التحكم ======
 function addControlButtons() {
     if (!isAdmin) return;
 
@@ -1947,7 +2175,6 @@ function addControlButtons() {
     }
 }
 
-// ====== اختبار اتصال GitHub ======
 async function testGitHubConnection() {
     try {
         const response = await fetch(
@@ -1973,31 +2200,38 @@ async function testGitHubConnection() {
     }
 }
 
-// ====== بدء النظام ======
 async function initializeTournament() {
     console.log('🚀 بدء تشغيل البطولة...');
 
-    // 1. إعداد النظام
+    // 1. إضافة أنماط Zoom
+    addZoomStyles();
+    
+    // 2. توزيع اللاعبين
+    distributePlayers();
+    
+    // 3. إضافة Zoom للسلوطات
+    addZoomToAllSlots();
+
+    // 4. إعداد النظام
     await setupTokenSystem();
 
-    // 2. تحميل البيانات السابقة (للمشاهدين والمسؤولين)
+    // 5. تحميل البيانات السابقة
     tournamentData = await loadTournamentData();
     if (Object.keys(tournamentData).length > 0) {
         applyTournamentData(tournamentData);
         console.log('✅ تم تحميل النتائج السابقة');
     }
 
-    // 3. تشغيل النجوم
+    // 6. تشغيل النجوم
     animate();
 
-    // 4. تطبيق الترجمة
+    // 7. تطبيق الترجمة
     updatePageLanguage();
 
-    // 5. اختبار اتصال GitHub
+    // 8. اختبار اتصال GitHub
     setTimeout(testGitHubConnection, 1000);
 }
 
-// ====== نظام التوكن الذكي ======
 async function setupTokenSystem() {
     try {
         const response = await fetch('token.html');
@@ -2023,46 +2257,12 @@ async function setupTokenSystem() {
     return false;
 }
 
-// ====== تشغيل عند تحميل الصفحة ======
-document.addEventListener('DOMContentLoaded', function() {
+window.onload = function() {
     setTimeout(() => {
         initializeTournament();
     }, 500);
+};
 
-    // تعديل حجم السلوطات
-    const slots = document.querySelectorAll('.slot');
-    slots.forEach(function(s) {
-        let w = s.getAttribute('data-w');
-        let h = s.getAttribute('data-h');
-
-        function normalizeSize(val, fallback) {
-            if (!val || val.trim() === '') return fallback + 'px';
-            val = val.trim();
-            if (val.endsWith('%') || val.endsWith('vw') || val.endsWith('vh') || val.endsWith('px')) return val;
-            if (/^[0-9]+$/.test(val)) return val + 'px';
-            return val;
-        }
-
-        const finalW = normalizeSize(w, 150);
-        const finalH = normalizeSize(h, 240);
-
-        s.style.width = finalW;
-        s.style.height = finalH;
-
-        try {
-            if (finalH.endsWith('px')) {
-                const num = parseInt(finalH.replace('px',''), 10);
-                const fontSize = Math.max(12, Math.min(24, Math.round(num / 10)));
-                s.style.fontSize = fontSize + 'px';
-            }
-        } catch(e) {}
-
-        const label = s.querySelector('.label');
-        if (label) s.setAttribute('aria-label', label.innerText || 'slot');
-    });
-});
-
-// ====== تنبيه عند مغادرة الصفحة ======
 window.addEventListener('beforeunload', function(e) {
     if (hasChanges && isAdmin) {
         e.preventDefault();
@@ -2071,14 +2271,8 @@ window.addEventListener('beforeunload', function(e) {
     }
 });
 
-// ====== تهيئة القصة ======
 document.getElementById("storyModal").style.display = "none";
 </script>
 
 </body>
 </html>
-
-
-
-
-
