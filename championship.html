@@ -682,11 +682,36 @@ body {
     margin: 0 !important;
 }
 
+    /* إخفاء عنصر الصوت */
+#storyAudio {
+    display: none;
+}
 
+/* إشارة خفية أن الموقع به صوت */
+body::after {
+    content: "🔊";
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    font-size: 14px;
+    opacity: 0.5;
+    z-index: 9999;
+    pointer-events: none;
+    animation: audioHint 2s infinite alternate;
+}
+
+@keyframes audioHint {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.7; }
+}
 </style>
 </head>
 
 <body>
+
+<audio id="storyAudio" preload="auto">
+    <source src="audio/vegastory.mp3" type="audio/mpeg">
+</audio>
 
 <header>
     <div class="header-inner">
@@ -1112,37 +1137,37 @@ function addZoomStyles() {
             z-index: 9998;
             pointer-events: none;
         }
-        
+
         /* السلوط المكبر */
         .slot.zoomed {
             z-index: 9999 !important;
             position: relative;
             transform: perspective(1000px) rotateX(0deg) rotateY(0deg) skewY(0deg) scale(1.8) !important;
-            box-shadow: 
+            box-shadow:
                 0 0 60px rgba(255, 200, 0, 0.9),
                 0 0 100px rgba(255, 100, 0, 0.7),
                 inset 0 0 50px rgba(255, 255, 255, 0.3) !important;
             animation: zoomPulse 2s infinite alternate;
             border: 3px solid #ffcc00 !important;
         }
-        
+
         /* بقية السلوطات عند التكبير */
         body.zoomed-mode .slot:not(.zoomed) {
             opacity: 0.4;
             filter: blur(2px);
             transform: perspective(800px) rotateX(12deg) rotateY(35deg) skewY(-5deg) scale(0.9) !important;
         }
-        
+
         @keyframes zoomPulse {
             0% { box-shadow: 0 0 50px rgba(255, 200, 0, 0.8), 0 0 90px rgba(255, 100, 0, 0.6); }
             100% { box-shadow: 0 0 70px rgba(255, 220, 0, 1), 0 0 120px rgba(255, 80, 0, 0.8); }
         }
-        
+
         /* تحسين الانتقالات */
         .slot {
             transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
         }
-        
+
         /* زر إغلاق Zoom */
         .close-zoom-btn {
             position: absolute;
@@ -1159,11 +1184,11 @@ function addZoomStyles() {
             z-index: 10000;
             display: none;
         }
-        
+
         body.zoomed-mode .close-zoom-btn {
             display: block;
         }
-        
+
         /* تحسين النص عند التكبير */
         .slot.zoomed .label {
             font-size: 24px !important;
@@ -1180,23 +1205,23 @@ function zoomSlot(slot) {
         removeZoom();
         return;
     }
-    
+
     // إزالة التكبير السابق
     if (currentZoomedSlot) {
         removeZoom();
     }
-    
+
     // تطبيق التكبير
     currentZoomedSlot = slot;
     isZoomed = true;
-    
+
     // إضافة الكلاس للجسم
     document.body.classList.add('zoomed-mode');
-    
+
     // إضافة الكلاس للسلوط
     setTimeout(() => {
         slot.classList.add('zoomed');
-        
+
         // إضافة زر الإغلاق
         const closeBtn = document.createElement('button');
         closeBtn.className = 'close-zoom-btn';
@@ -1206,35 +1231,35 @@ function zoomSlot(slot) {
             removeZoom();
         };
         slot.appendChild(closeBtn);
-        
+
         // تمركز السلوط في الشاشة
         const rect = slot.getBoundingClientRect();
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
-        
+
         slot.style.left = `${(windowWidth/2) - (rect.width/2) - rect.left}px`;
         slot.style.top = `${(windowHeight/2) - (rect.height/2) - rect.top}px`;
-        
+
     }, 50);
-    
+
     console.log('🔍 تم تكبير السلوط:', slot.querySelector('.label')?.textContent);
 }
 
 // ====== دالة إزالة التكبير ======
 function removeZoom() {
     if (!currentZoomedSlot) return;
-    
+
     document.body.classList.remove('zoomed-mode');
     currentZoomedSlot.classList.remove('zoomed');
-    
+
     // إزالة زر الإغلاق
     const closeBtn = currentZoomedSlot.querySelector('.close-zoom-btn');
     if (closeBtn) closeBtn.remove();
-    
+
     // إعادة تعيين الموضع
     currentZoomedSlot.style.left = '';
     currentZoomedSlot.style.top = '';
-    
+
     currentZoomedSlot = null;
     isZoomed = false;
 }
@@ -1242,11 +1267,11 @@ function removeZoom() {
 // ====== إضافة Zoom إلى جميع السلوطات ======
 function addZoomToAllSlots() {
     const allSlots = document.querySelectorAll('.slot');
-    
+
     allSlots.forEach(slot => {
         // حفظ الحدث الأصلي
         const originalClick = slot.onclick;
-        
+
         // إضافة حدث جديد
         slot.addEventListener('click', function(e) {
             // إذا كان في وضع Zoom، لا تنفذ الحدث الأصلي
@@ -1254,11 +1279,11 @@ function addZoomToAllSlots() {
                 e.stopPropagation();
                 return;
             }
-            
+
             // Zoom عند النقر الطويل أو النقر المزدوج
             const now = Date.now();
             const lastClick = this.lastClickTime || 0;
-            
+
             if (now - lastClick < 300) { // نقر مزدوج
                 e.stopPropagation();
                 zoomSlot(this);
@@ -1268,10 +1293,10 @@ function addZoomToAllSlots() {
                     if (originalClick) originalClick.call(this, e);
                 }
             }
-            
+
             this.lastClickTime = now;
         });
-        
+
         // إضافة تأثير عند مرور الماوس
         slot.addEventListener('mouseenter', function() {
             if (!isZoomed) {
@@ -1279,7 +1304,7 @@ function addZoomToAllSlots() {
                 this.style.zIndex = '100';
             }
         });
-        
+
         slot.addEventListener('mouseleave', function() {
             if (!isZoomed && !this.classList.contains('active')) {
                 this.style.transform = 'perspective(800px) rotateX(12deg) rotateY(35deg) skewY(-5deg)';
@@ -1287,14 +1312,14 @@ function addZoomToAllSlots() {
             }
         });
     });
-    
+
     // إغلاق Zoom عند النقر خارج السلوط
     document.addEventListener('click', function(e) {
         if (isZoomed && !e.target.closest('.slot.zoomed')) {
             removeZoom();
         }
     });
-    
+
     // إغلاق Zoom عند ضغط زر Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && isZoomed) {
@@ -1306,38 +1331,38 @@ function addZoomToAllSlots() {
 // ====== دالة توزيع اللاعبين تلقائياً ======
 function distributePlayers() {
     console.log('🎮 جاري توزيع اللاعبين...');
-    
+
     Object.keys(playersData).forEach(playerId => {
         const slot = document.getElementById(playerId);
         if (!slot) {
             console.warn(`⚠️ لم يتم العثور على العنصر: ${playerId}`);
             return;
         }
-        
+
         const player = playersData[playerId];
         const label = slot.querySelector('.label');
         const img = slot.querySelector('.side-img');
-        
+
         if (label) {
             label.textContent = player.name;
             label.style.display = 'block';
         }
-        
+
         if (img) {
             img.src = player.img;
             img.alt = `صورة ${player.name}`;
             img.style.display = 'block';
             img.style.transform = 'translateY(-50%)';
-            
+
             img.onerror = function() {
                 console.error(`❌ فشل تحميل صورة: ${player.img}`);
                 this.style.display = 'none';
             };
         }
-        
+
         console.log(`✅ تم تعبئة ${playerId}: ${player.name}`);
     });
-    
+
     console.log('✅ تم توزيع جميع اللاعبين بنجاح!');
 }
 
@@ -1890,13 +1915,13 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
         labelBox.textContent = label;
         labelBox.style.display = 'block';
     }
-    
+
     if (imgBox) {
         imgBox.src = winnerImg;
         imgBox.alt = `صورة ${label}`;
         imgBox.style.transform = "translateY(-50%)";
         imgBox.style.display = "block";
-        
+
         imgBox.onerror = function() {
             console.error(`❌ فشل تحميل صورة الفائز: ${winnerImg}`);
             this.style.display = 'none';
@@ -1921,7 +1946,7 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
                 copyImg.alt = `صورة ${label}`;
                 copyImg.style.transform = "translateY(-50%)";
                 copyImg.style.display = "block";
-                
+
                 copyImg.onerror = function() {
                     console.error(`❌ فشل تحميل صورة النسخة: ${winnerImg}`);
                     this.style.display = 'none';
@@ -1947,7 +1972,7 @@ async function secureSelect(clickedSlot, nextRoundId, position) {
                 copyImg.alt = `صورة ${label}`;
                 copyImg.style.transform = "translateY(-50%)";
                 copyImg.style.display = "block";
-                
+
                 copyImg.onerror = function() {
                     console.error(`❌ فشل تحميل صورة النسخة: ${winnerImg}`);
                     this.style.display = 'none';
@@ -2205,10 +2230,10 @@ async function initializeTournament() {
 
     // 1. إضافة أنماط Zoom
     addZoomStyles();
-    
+
     // 2. توزيع اللاعبين
     distributePlayers();
-    
+
     // 3. إضافة Zoom للسلوطات
     addZoomToAllSlots();
 
@@ -2272,8 +2297,119 @@ window.addEventListener('beforeunload', function(e) {
 });
 
 document.getElementById("storyModal").style.display = "none";
+
+    // ====== نظام تشغيل الصوت عند أول تفاعل ======
+let audioStarted = false;
+
+function startAudioOnFirstInteraction() {
+    if (audioStarted) return;
+
+    const audio = document.getElementById('storyAudio');
+    if (!audio) {
+        console.error('❌ لم يتم العثور على ملف الصوت');
+        return;
+    }
+
+    // محاولة تشغيل الصوت
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            console.log('🎵 بدأ تشغيل قصة فيجابونك...');
+            audioStarted = true;
+
+            // إزالة جميع المستمعات بعد التشغيل الناجح
+            removeAllAudioListeners();
+
+        }).catch(error => {
+            console.log('⚠️ لم يتم تشغيل الصوت تلقائياً:', error);
+            // سنحاول مرة أخرى عند التفاعل التالي
+        });
+    }
+}
+
+// إزالة جميع مستمعات الصوت
+function removeAllAudioListeners() {
+    const events = ['click', 'keydown', 'touchstart', 'mousedown', 'scroll'];
+    events.forEach(event => {
+        document.removeEventListener(event, startAudioOnFirstInteraction);
+    });
+    console.log('🎵 تم إزالة مستمعات الصوت');
+}
+
+// تنظيف الصوت بعد الانتهاء
+function cleanupAudio() {
+    const audio = document.getElementById('storyAudio');
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = '';
+        audio.load();
+        console.log('✅ تم تنظيف الصوت من الذاكرة');
+    }
+
+    // إخفاء الإشارة بعد انتهاء الصوت
+    const style = document.createElement('style');
+    style.textContent = 'body::after { display: none !important; }';
+    document.head.appendChild(style);
+}
+
+// إضافة مستمعات الأحداث
+function setupAudioListeners() {
+    const events = ['click', 'keydown', 'touchstart', 'mousedown', 'scroll'];
+
+    events.forEach(event => {
+        document.addEventListener(event, startAudioOnFirstInteraction, {
+            once: false,
+            passive: true
+        });
+    });
+
+    console.log('🎵 تم إعداد مستمعات الصوت للتفاعل الأول');
+}
+
+// إعداد الصوت عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    const audio = document.getElementById('storyAudio');
+
+    if (audio) {
+        // إعداد حدث انتهاء الصوت
+        audio.addEventListener('ended', function() {
+            console.log('🎵 انتهى الصوت');
+            cleanupAudio();
+            removeAllAudioListeners();
+        });
+
+        // إعداد حدث خطأ في الصوت
+        audio.addEventListener('error', function(e) {
+            console.error('❌ خطأ في تحميل الصوت:', e);
+            removeAllAudioListeners();
+
+            // إخفاء الإشارة في حالة الخطأ
+            const style = document.createElement('style');
+            style.textContent = 'body::after { display: none !important; }';
+            document.head.appendChild(style);
+        });
+
+        // إعداد مستمعات التفاعل
+        setupAudioListeners();
+
+        console.log('✅ نظام الصوت جاهز');
+    } else {
+        console.error('❌ عنصر الصوت غير موجود في الصفحة');
+    }
+});
+
+// محاولة تشغيل الصوت أيضًا عند تحميل النافذة
+window.addEventListener('load', function() {
+    // إعطاء فرصة إضافية للتشغيل
+    setTimeout(() => {
+        if (!audioStarted) {
+            console.log('🔄 انتظار التفاعل الأول...');
+        }
+    }, 1000);
+});
 </script>
 
 </body>
 </html>
-
