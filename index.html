@@ -74,7 +74,6 @@
             overflow-x: hidden;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
-            cursor: pointer; /* لإظهار أن الصفحة قابلة للنقر */
         }
 
         .ocean-waves {
@@ -483,7 +482,7 @@
 
 <button class="translate-btn" id="translateBtn" title="ترجمة إلى الصينية">中</button>
 
-<div class="audioyassir.mp3"></div>
+<div class="ocean-waves"></div>
 
 <div class="bubbles">
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
@@ -560,64 +559,86 @@
     </button>
 
     <div class="telegram-container">
-        <a href="https://t.me/theghostsOPFPchat" class="telegram-link" target="_blank">telegram</a>
+        <a href="https://t.me/theghostsOPFPchat" class="telegram-link" target="_blank">télégramme</a>
         <a href="https://www.youtube.com/" class="telegram-link" target="_blank">Youtube</a>
-        <a href="https://www.tiktok.com/@theghostsopfp09088?_r=1&_t=ZM-92UhXo0SgGG" class="telegram-link" target="_blank">Youtube</a>
     </div>
 
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // عناصر DOM الأساسية
         const capsules = document.querySelectorAll('.image-capsule');
         const sliderTrack = document.getElementById('sliderTrack');
         const translateBtn = document.getElementById('translateBtn');
 
+        // متغيرات التحكم
         let isSliderPaused = false;
         let isTranslated = false;
-        let soundsStarted = false;
 
-        // إنشاء عنصر الصوت من الملف الجديد
-        const oceanSound = new Audio('audio/audioyassir.mp3');
+        // نظام الصوت - مبسط وبدون رسائل
+        let mainSound = null;
+        let soundStarted = false;
 
-// تكرار الصوت
-        oceanSound.loop = true;
-
-// ضبط حجم الصوت (يمكنك تعديله)
-        oceanSound.volume = 0.4;;
-
-        // دالة لبدء تشغيل الأصوات
-        function startSounds() {
-            if (soundsStarted) return;
-
+        // تهيئة الصوت (بدون أي رسائل)
+        function initializeSound() {
             try {
-                audioyassir.play();
-                soundsStarted = true;
-                console.log("بدأ تشغيل أصوات الماء والفقاعات 🎵");
-
-                // إزالة مستمع الحدث بعد التشغيل
-                document.body.removeEventListener('click', startSounds);
-                document.body.removeEventListener('touchstart', startSounds);
+                mainSound = new Audio('audio/audioyassir.mp3');
+                mainSound.loop = true;
+                mainSound.volume = 0.4;
+                mainSound.preload = 'auto';
             } catch (error) {
-                console.log("خطأ في تشغيل الصوت:", error);
+                // لا تظهر أي رسائل للزائر
             }
         }
 
-        // إضافة مستمعي الأحداث للجسم كله
-        document.body.addEventListener('click', startSounds);
-        document.body.addEventListener('touchstart', startSounds);
+        // بدء تشغيل الصوت (بدون أي رسائل)
+        function startSound() {
+            if (soundStarted) return;
 
-        // تأثير النقر على الكبسولات
+            if (!mainSound) {
+                initializeSound();
+            }
+
+            try {
+                if (mainSound) {
+                    mainSound.play()
+                        .then(() => {
+                            soundStarted = true;
+                            // إزالة مستمعي الأحداث بعد التشغيل الأول
+                            document.body.removeEventListener('click', startSound);
+                            document.body.removeEventListener('touchstart', startSound);
+                        })
+                        .catch(() => {
+                            // لا تظهر أي رسائل للزائر
+                        });
+                }
+            } catch (error) {
+                // لا تظهر أي رسائل للزائر
+            }
+        }
+
+        // تهيئة الصوت عند تحميل الصفحة
+        initializeSound();
+
+        // إضافة مستمعي الأحداث للبدء عند التفاعل
+        document.body.addEventListener('click', startSound);
+        document.body.addEventListener('touchstart', startSound);
+
+        // تأثيرات النقر على الكبسولات
         capsules.forEach(capsule => {
             capsule.addEventListener('click', function(e) {
-                // تأثير النقر
                 this.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     this.style.transform = '';
                 }, 150);
 
+                // تشغيل الصوت إذا لم يبدأ
+                if (!soundStarted) {
+                    startSound();
+                }
+
                 if (this.onclick) return;
-                const text = this.querySelector('.capsule-text').textContent;
             });
         });
 
@@ -654,9 +675,10 @@
         // وظيفة الترجمة
         translateBtn.addEventListener('click', function() {
             const capsuleTexts = document.querySelectorAll('.capsule-text');
-            const telegramLink = document.querySelector('.telegram-link');
+            const telegramLinks = document.querySelectorAll('.telegram-link');
 
             if (!isTranslated) {
+                // الترجمة إلى الصينية
                 capsuleTexts.forEach(text => {
                     const originalText = text.textContent;
                     switch(originalText) {
@@ -665,11 +687,21 @@
                         case 'Mastery': text.textContent = '精通'; break;
                     }
                 });
-                telegramLink.textContent = '电报';
+
+                telegramLinks.forEach(link => {
+                    if (link.textContent.includes('télégramme')) {
+                        link.textContent = '电报';
+                    } else if (link.textContent.includes('Youtube')) {
+                        link.textContent = '油管';
+                    }
+                });
+
                 isTranslated = true;
                 translateBtn.textContent = 'ع';
                 translateBtn.title = "ترجمة إلى العربية";
+
             } else {
+                // العودة إلى الإنجليزية/الفرنسية
                 capsuleTexts.forEach(text => {
                     const translatedText = text.textContent;
                     switch(translatedText) {
@@ -678,10 +710,25 @@
                         case '精通': text.textContent = 'Mastery'; break;
                     }
                 });
-                telegramLink.textContent = 'télégramme';
+
+                telegramLinks.forEach(link => {
+                    if (link.textContent === '电报') {
+                        link.textContent = 'télégramme';
+                    } else if (link.textContent === '油管') {
+                        link.textContent = 'Youtube';
+                    }
+                });
+
                 isTranslated = false;
                 translateBtn.textContent = '中';
                 translateBtn.title = "ترجمة إلى الصينية";
+            }
+        });
+
+        // التأكد من توقف الصوت عند مغادرة الصفحة
+        window.addEventListener('beforeunload', function() {
+            if (mainSound && !mainSound.paused) {
+                mainSound.pause();
             }
         });
     });
