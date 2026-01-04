@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tournament Tree - Pro Edition (With Reset & Image Editor)</title>
+    <style>
+        /* =========================================
+           1. الأساسيات والمؤثرات (خلفية، هاكي، شرر)
+           ========================================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #01050a; min-height: 100vh; overflow-x: auto; font-family: sans-serif; transition: outline 0.5s; position: relative; }
+
+        .bg-glow-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background: radial-gradient(circle at 10% 10%, rgba(0, 162, 255, 0.6), transparent 50%), radial-gradient(circle at 90% 90%, rgba(255, 30, 0, 0.5), transparent 50%); }
+
+        svg.distort-engine { position: absolute; width: 0; height: 0; }
+        .haki-lines-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; filter: url(#organic-haki); display: flex; justify-content: center; align-items: center; pointer-events: none; }
+        .haki-ring { position: absolute; border: 0.8px solid rgba(255, 255, 255, 0.4); border-radius: 50%; animation: staticPulse 7s infinite ease-in-out; }
+        @keyframes staticPulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.5; } }
+
+        .sparks-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2; pointer-events: none; }
+        .spark { position: absolute; width: 3px; height: 3px; border-radius: 50%; opacity: 0; animation: sparkAnim 10s infinite ease-in-out; }
+        .fire-spark { background: linear-gradient(to bottom, #ff4500, #ff8c00); box-shadow: 0 0 8px #ff4500; }
+        .water-spark { background: #00d2ff; box-shadow: 0 0 8px #00d2ff; }
+        @keyframes sparkAnim { 0% { transform: translateY(0); opacity: 0; } 50% { transform: translateY(-100px) translateX(20px); opacity: 0.3; } 100% { transform: translateY(-200px) translateX(-20px); opacity: 0; } }
+
+        /* =========================================
+           2. تخطيط الهيكل والمسافات الفردية
+           ========================================= */
+        .wrapper { position: relative; z-index: 10; display: flex; padding: 80px 20px 100px; width: fit-content; }
+        .column { display: flex; flex-direction: column; width: 480px; flex-shrink: 0; }
+        .side-column, .final-column { margin-left: 60px; }
+
+        /* الجولة الأولى (p1 - p8) */
+        #p1, #p2, #p3, #p4, #p5, #p6, #p7, #p8 { margin-bottom: 40px; }
+
+        /* --- الجولة الثانية: تحكم بكل واحد منفرد --- */
+        #p9  { margin-top: 230px; margin-bottom: 460px; margin-left: -120px;  } /* القالب الأول في العمود 2 */
+        #p10 { margin-top: 40px;   margin-bottom: 460px; margin-left: -120px;  } /* القالب الثاني في العمود 2 */
+        #p11 { margin-top: 40px;   margin-bottom: 460px; margin-left: -120px;  } /* القالب الثالث في العمود 2 */
+        #p12 { margin-top: 40px;   margin-bottom: 0px; margin-left: -120px;    } /* القالب الرابع في العمود 2 */
+
+        /* --- نصف النهائي: تحكم منفرد --- */
+        #p13 { margin-top: 650px; margin-bottom: 920px; margin-left: -660px;  } /* القالب الأول في العمود 3 */
+        #p14 { margin-top: 540px; margin-left: -660px; }                         /* القالب الثاني في العمود 3 */
+
+        /* --- النهائي الكبير --- */
+        .grand-final-column {
+            margin-left: -1140px;
+            padding-top: 1580px; /* يتحكم بارتفاع القالب الأخير p15 */
+        }
+
+        /* =========================================
+           3. تصميم القالب (Template Design)
+           ========================================= */
+        .template { width: 380px; height: 420px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .battle-arena { display: flex; justify-content: space-around; align-items: flex-start; width: 100%; height: 350px; }
+        .player-col { display: flex; flex-direction: column; width: 100px; align-items: center; cursor: pointer; position: relative; }
+
+        .mini-group { display: flex; justify-content: space-between; width: 100%; height: 75px; margin-bottom: 8px; position: relative; }
+        .left .mini-group { left: 25px; }
+        .right .mini-group { left: -25px; }
+        .mini-group img { width: 31%; height: 75px; object-fit: cover; border: 1px solid #ddd; background: rgba(255,255,255,0.05); visibility: hidden; }
+
+        .banner { width: 100px; height: 240px; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s ease, box-shadow 0.3s; position: relative; }
+        .hero-img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; visibility: hidden; }
+
+        .left .banner { background-color: #1a305e; transform: skewX(-12deg); }
+        .left .hero-img { transform: skewX(12deg) scale(1.3); }
+        .right .banner { background-color: #3b1111; transform: skewX(12deg); }
+        .right .hero-img { transform: skewX(-12deg) scale(1.3); }
+
+        .left.is-winner .banner { transform: skewX(-12deg) scale(1.1) !important; outline: 3px solid gold; box-shadow: 0 0 30px gold; z-index: 5; }
+        .right.is-winner .banner { transform: skewX(12deg) scale(1.1) !important; outline: 3px solid gold; box-shadow: 0 0 30px gold; z-index: 5; }
+        .is-loser { opacity: 0.4; filter: grayscale(1); }
+
+        .vs-text { font-size: 55px; font-weight: 900; background: linear-gradient(to bottom, #4b0082, #ff0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding-top: 160px; pointer-events: none; }
+
+        .name-tag { margin-top: 10px; font-weight: bold; font-size: 1.1rem; color: #fff; min-height: 1.5em; text-align: center; width: 150px; position: relative; }
+        .left .name-tag { left: 0px; }
+        .right .name-tag { left: 0px; }
+
+        /* زر إعادة التعيين (يظهر فقط للمسؤول) */
+        #resetBtn {
+            display: none; /* مخفي افتراضياً */
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            padding: 15px 25px;
+            background: linear-gradient(45deg, #ff0000, #990000);
+            color: white;
+            border: 2px solid #ff5555;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+            transition: 0.3s;
+        }
+        #resetBtn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 0, 0, 0.8); }
+
+        /* =========================================
+           4. نصوص part 8 و part 4 و final
+           ========================================= */
+        .part-label {
+            position: absolute;
+            top: -60px; /* المسافة من أعلى القالب */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 20px;
+            border-radius: 10px;
+            white-space: nowrap;
+            animation: neon-text-glow 2s infinite alternate;
+        }
+
+        /* part 8 - لون أزرق */
+        .part-8-label {
+            color: #00a2ff;
+            text-shadow:
+                0 0 10px #00a2ff,
+                0 0 20px #00a2ff,
+                0 0 30px #00a2ff,
+                0 0 40px #00a2ff;
+            border: 2px solid #00a2ff;
+            box-shadow:
+                0 0 15px rgba(0, 162, 255, 0.5),
+                inset 0 0 10px rgba(0, 162, 255, 0.3);
+        }
+
+        /* part 4 - لون برتقالي مصفر (نار) */
+        .part-4-label {
+            color: #ff9900;
+            text-shadow:
+                0 0 10px #ff9900,
+                0 0 20px #ff9900,
+                0 0 30px #ff9900,
+                0 0 40px #ff9900;
+            border: 2px solid #ff9900;
+            box-shadow:
+                0 0 15px rgba(255, 153, 0, 0.5),
+                inset 0 0 10px rgba(255, 153, 0, 0.3);
+        }
+
+        /* final - لون أحمر مصفر (نار) */
+        .final-label {
+            color: #ff3300;
+            text-shadow:
+                0 0 10px #ff3300,
+                0 0 20px #ff3300,
+                0 0 30px #ff3300,
+                0 0 40px #ff3300;
+            border: 2px solid #ff3300;
+            box-shadow:
+                0 0 15px rgba(255, 51, 0, 0.5),
+                inset 0 0 10px rgba(255, 51, 0, 0.3);
+        }
+
+        @keyframes neon-text-glow {
+            0% {
+                opacity: 0.8;
+                filter: brightness(1);
+            }
+            100% {
+                opacity: 1;
+                filter: brightness(1.3);
+            }
+        }
+
+        /* =========================================
+           5. مؤشر وضع تعديل الصور
+           ========================================= */
+        .edit-mode-active {
+            animation: edit-mode-pulse 1s infinite;
+        }
+
+        @keyframes edit-mode-pulse {
+            0%, 100% { outline: 3px solid #00ff00; }
+            50% { outline: 3px solid #00ff00; box-shadow: 0 0 20px #00ff00; }
+        }
+
+        .edit-mode-indicator {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid #00ff00;
+            z-index: 10000;
+            font-weight: bold;
+            display: none;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+
+                /* =========================================
+           6. بار الهاكي الرقيق (Ultra-Slim Ghost Nav)
+           ========================================= */
+        .cyber-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 28px; /* رقة متناهية */
+            z-index: 9999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            /* ألوان متناغمة مع خلفية الهاكي الأصلية مع شفافية */
+            background: linear-gradient(90deg,
+                rgba(255, 30, 0, 0.2) 0%,
+                rgba(1, 5, 10, 0.6) 50%,
+                rgba(0, 162, 255, 0.2) 100%);
+            background-size: 300% 300%;
+            animation: ultraSlowFlow 20s ease infinite; /* حركة بطيئة جداً كأنها لا تُرى */
+            backdrop-filter: blur(3px); /* شفافية زجاجية */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes ultraSlowFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .nav-hidden { transform: translateY(-100%); }
+
+        /* زر home يسار - أزرق هادئ */
+        .nav-home-btn {
+            text-decoration: none;
+            color: rgba(0, 210, 255, 0.8);
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .nav-home-btn:hover { color: #fff; text-shadow: 0 0 5px #00d2ff; }
+
+                /* النص في الوسط - ناري هادئ */
+        .nav-title {
+            position: absolute;
+            left: 50%;
+            top: 62%; /* تم تغييرها من 50% لإنزال النص قليلاً */
+            transform: translate(-50%, -50%); /* يضمن بقاء النص في المنتصف أفقياً وعمودياً بعد التغيير */
+            font-size: 12px;
+            font-weight: bold;
+            color: rgba(255, 140, 0, 0.9);
+            text-shadow: 0 0 8px rgba(255, 69, 0, 0.4);
+            white-space: nowrap;
+            letter-spacing: 2px;
+        }
+
+
+    </style>
+</head>
+<body onclick="handleSecret()">
+
+    <nav class="cyber-nav" id="smartNav">
+        <a href="index.html" class="nav-home-btn">home</a>
+        <div class="nav-title">ᴳᴴ༼ champion༽</div>
+        <div style="width: 40px;"></div>
+    </nav>
+
+    <div class="bg-glow-layer"></div>
+    <svg class="distort-engine"><filter id="organic-haki"><feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="4" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="90"/></filter></svg>
+    <div class="haki-lines-container"><div class="haki-ring" style="width:200px;height:200px"></div><div class="haki-ring" style="width:450px;height:450px"></div><div class="haki-ring" style="width:800px;height:800px"></div></div>
+    <div class="sparks-container" id="sparks"></div>
+
+    <!-- مؤشر وضع التعديل -->
+    <div class="edit-mode-indicator" id="editModeIndicator">
+        🖼️ وضع تعديل الصور مفعل - انقر على أي قالب لتغيير صوره
+    </div>
+
+    <div class="wrapper">
+        <div class="column" id="col1"></div>
+        <div class="column side-column" id="col2"></div>
+        <div class="column final-column" id="col3"></div>
+        <div class="column grand-final-column" id="col4"></div>
+    </div>
+
+    <button id="resetBtn" onclick="resetTournament()">🔄 إعادة تعيين البطولة</button>
+
+    <script>
+        const CONFIG = {
+            REPO_OWNER: 'familytheghosts-dot',
+            REPO_NAME: 'the-ghosts--one-piece-fighting-path-team-',
+            ADMIN_PASSWORD: 'adminyassir'
+        };
+
+        const matchesData = [
+    {
+        id: 'p1',
+        left: {
+            bannerImg: 'https://i.ibb.co/q3DhWNs0/1767566469357-edited-1767566528575.jpg',
+            mini1: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini2: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini3: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            name: 'Member 1'
+        },
+        right: {
+            bannerImg: 'https://i.ibb.co/XxN6L5Gj/1767566439239-edited-1767566528705.jpg',
+            mini1: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini2: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini3: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            name: 'Member 2'
+        }
+    },
+    {
+        id: 'p2',
+        left: {
+            bannerImg: 'https://i.ibb.co/q3DhWNs0/1767566469357-edited-1767566528575.jpg',
+            mini1: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini2: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini3: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            name: 'Member 1'
+        },
+        right: {
+            bannerImg: 'https://i.ibb.co/XxN6L5Gj/1767566439239-edited-1767566528705.jpg',
+            mini1: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini2: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini3: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            name: 'Member 2'
+        }
+    },
+    {
+        id: 'p3',
+        left: {
+            bannerImg: 'https://i.ibb.co/q3DhWNs0/1767566469357-edited-1767566528575.jpg',
+            mini1: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini2: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini3: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            name: 'Member 1'
+        },
+        right: {
+            bannerImg: 'https://i.ibb.co/XxN6L5Gj/1767566439239-edited-1767566528705.jpg',
+            mini1: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini2: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini3: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            name: 'Member 2'
+        }
+    },
+    {
+        id: 'p4',
+        left: {
+            bannerImg: 'https://i.ibb.co/q3DhWNs0/1767566469357-edited-1767566528575.jpg',
+            mini1: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini2: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini3: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            name: 'Member 1'
+        },
+        right: {
+            bannerImg: 'https://i.ibb.co/XxN6L5Gj/1767566439239-edited-1767566528705.jpg',
+            mini1: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini2: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini3: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            name: 'Member 2'
+        }
+    },
+    {
+        id: 'p5',
+        left: {
+            bannerImg: 'https://i.ibb.co/q3DhWNs0/1767566469357-edited-1767566528575.jpg',
+            mini1: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini2: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini3: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            name: 'Member 1'
+        },
+        right: {
+            bannerImg: 'https://i.ibb.co/XxN6L5Gj/1767566439239-edited-1767566528705.jpg',
+            mini1: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini2: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini3: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            name: 'Member 2'
+        }
+    },
+    {
+        id: 'p6',
+        left: {
+            bannerImg: 'https://i.ibb.co/q3DhWNs0/1767566469357-edited-1767566528575.jpg',
+            mini1: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini2: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini3: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            name: 'Member 1'
+        },
+        right: {
+            bannerImg: 'https://i.ibb.co/XxN6L5Gj/1767566439239-edited-1767566528705.jpg',
+            mini1: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini2: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini3: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            name: 'Member 2'
+        }
+    },
+    {
+        id: 'p7',
+        left: {
+            bannerImg: 'https://i.ibb.co/q3DhWNs0/1767566469357-edited-1767566528575.jpg',
+            mini1: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini2: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini3: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            name: 'Member 1'
+        },
+        right: {
+            bannerImg: 'https://i.ibb.co/XxN6L5Gj/1767566439239-edited-1767566528705.jpg',
+            mini1: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini2: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini3: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            name: 'Member 2'
+        }
+    },
+    {
+        id: 'p8',
+        left: {
+            bannerImg: 'https://i.ibb.co/q3DhWNs0/1767566469357-edited-1767566528575.jpg',
+            mini1: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini2: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            mini3: 'https://i.ibb.co/MkqxS1gk/1767566070199-edited-1767566210396.jpg',
+            name: 'Member 1'
+        },
+        right: {
+            bannerImg: 'https://i.ibb.co/XxN6L5Gj/1767566439239-edited-1767566528705.jpg',
+            mini1: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini2: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            mini3: 'https://i.ibb.co/gbjSXQpg/1767566101709-edited-1767566210275.jpg',
+            name: 'Member 2'
+        }
+    }
+];
+
+        let GITHUB_TOKEN = '';
+        let isAdmin = false;
+        let tournamentData = {};
+        let currentPlayers = {};
+        let editMode = false; // وضع تعديل الصور
+
+        const branching = {
+            'p1': { n: 'p9', s: 'left' },  'p2': { n: 'p9', s: 'right' },
+            'p3': { n: 'p10', s: 'left' }, 'p4': { n: 'p10', s: 'right' },
+            'p5': { n: 'p11', s: 'left' }, 'p6': { n: 'p11', s: 'right' },
+            'p7': { n: 'p12', s: 'left' }, 'p8': { n: 'p12', s: 'right' },
+            'p9': { n: 'p13', s: 'left' }, 'p10': { n: 'p13', s: 'right' },
+            'p11': { n: 'p14', s: 'left' }, 'p12': { n: 'p14', s: 'right' },
+            'p13': { n: 'p15', s: 'left' }, 'p14': { n: 'p15', s: 'right' }
+        };
+
+        // --- تحميل وحفظ البيانات ---
+        async function loadTournamentFromGithub() {
+            try {
+                const res = await fetch(`https://api.github.com/repos/${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/issues?labels=tournament-data&state=open`);
+                if (res.ok) {
+                    const issues = await res.json();
+                    if (issues.length > 0) {
+                        const match = issues[0].body.match(/```json\n([\s\S]*?)\n```/);
+                        if (match) {
+                            const loadedData = JSON.parse(match[1]);
+                            applyDataToTree(loadedData);
+                        }
+                    }
+                }
+            } catch (e) { console.error("Sync Error:", e); }
+        }
+
+        async function saveTournamentToGithub() {
+            if (!isAdmin || !GITHUB_TOKEN) return;
+
+            // التأكد من أن tournamentData يحتوي على بيانات الصور
+            updateTournamentDataWithCurrentPlayers();
+
+            const body = {
+                title: `🎯 Live Tournament Data`,
+                body: `### Current State\n\n\`\`\`json\n${JSON.stringify(tournamentData, null, 2)}\n\`\`\``,
+                labels: ['tournament-data']
+            };
+            try {
+                const old = await fetch(`https://api.github.com/repos/${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/issues?labels=tournament-data`);
+                const issues = await old.json();
+                let url = `https://api.github.com/repos/${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/issues`;
+                let method = 'POST';
+                if (issues.length > 0) {
+                    url += '/' + issues[0].number;
+                    method = 'PATCH';
+                }
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                if(res.ok) console.log("✅ تم التحديث بنجاح للجميع!");
+            } catch (e) { console.error("❌ خطأ في الحفظ:", e); }
+        }
+
+        // دالة لتحديث tournamentData ببيانات currentPlayers
+        function updateTournamentDataWithCurrentPlayers() {
+            // تحديث tournamentData ببيانات جميع المباريات
+            for (const matchId in currentPlayers) {
+                if (!tournamentData[matchId]) {
+                    tournamentData[matchId] = {};
+                }
+
+                // نسخ بيانات اللاعبين
+                if (currentPlayers[matchId].left) {
+                    tournamentData[matchId].left = {
+                        name: currentPlayers[matchId].left.name,
+                        img: currentPlayers[matchId].left.img,
+                        m1: currentPlayers[matchId].left.m1,
+                        m2: currentPlayers[matchId].left.m2,
+                        m3: currentPlayers[matchId].left.m3
+                    };
+                }
+
+                if (currentPlayers[matchId].right) {
+                    tournamentData[matchId].right = {
+                        name: currentPlayers[matchId].right.name,
+                        img: currentPlayers[matchId].right.img,
+                        m1: currentPlayers[matchId].right.m1,
+                        m2: currentPlayers[matchId].right.m2,
+                        m3: currentPlayers[matchId].right.m3
+                    };
+                }
+            }
+        }
+
+        // --- وظيفة إعادة التعيين (الجديدة) ---
+        async function resetTournament() {
+            if(!confirm("هل أنت متأكد من مسح جميع النتائج والبدء من جديد؟")) return;
+
+            // 1. مسح البيانات محلياً
+            tournamentData = {};
+            currentPlayers = {};
+
+            // 2. مسح التأثيرات البصرية
+            document.querySelectorAll('.is-winner, .is-loser').forEach(el => el.classList.remove('is-winner', 'is-loser'));
+
+            // 3. إفراغ محتوى الجولات المتقدمة (p9 وما فوق)
+            for (let i = 9; i <= 15; i++) {
+                const el = document.getElementById('p' + i);
+                if(el) {
+                    el.querySelectorAll('.banner img').forEach(img => {
+                        img.style.visibility = 'hidden';
+                        img.src = '';
+                    });
+                    el.querySelectorAll('.name-tag').forEach(tag => tag.innerText = '');
+                    el.querySelectorAll('.mini-group img').forEach(img => {
+                        img.style.visibility = 'hidden';
+                        img.src = '';
+                    });
+                }
+            }
+
+            // 4. إعادة تعيين الجولة الأولى
+            matchesData.forEach(match => {
+                updateSlot(match.id, 'left', {
+                    name: match.left.name,
+                    img: match.left.bannerImg,
+                    m1: match.left.mini1,
+                    m2: match.left.mini2,
+                    m3: match.left.mini3
+                });
+                updateSlot(match.id, 'right', {
+                    name: match.right.name,
+                    img: match.right.bannerImg,
+                    m1: match.right.mini1,
+                    m2: match.right.mini2,
+                    m3: match.right.mini3
+                });
+            });
+
+            // 5. الحفظ في GitHub (بيانات فارغة)
+            await saveTournamentToGithub();
+            alert("✅ تم إعادة تعيين البطولة بنجاح!");
+        }
+
+        // --- المنطق الداخلي ---
+        function applyDataToTree(data) {
+            Object.keys(data).forEach(matchId => {
+                const matchData = data[matchId];
+
+                // تطبيق بيانات اللاعبين إذا وجدت
+                if (matchData.left) {
+                    updateSlot(matchId, 'left', matchData.left, false);
+                }
+                if (matchData.right) {
+                    updateSlot(matchId, 'right', matchData.right, false);
+                }
+
+                // تطبيقالفائز إذا وجد
+                if (matchData.winnerSide) {
+                    selectWinner(matchId, matchData.winnerSide, false);
+                }
+            });
+        }
+
+        function selectWinner(matchId, side, shouldSync = true) {
+            const el = document.getElementById(matchId);
+            if (!el) return;
+
+            el.querySelectorAll('.player-col').forEach(p => p.classList.remove('is-winner', 'is-loser'));
+            el.querySelector('.' + side).classList.add('is-winner');
+            el.querySelector('.' + (side === 'left' ? 'right' : 'left')).classList.add('is-loser');
+
+            // تحديث tournamentData باللاعب الفائز
+            if (!tournamentData[matchId]) tournamentData[matchId] = {};
+            tournamentData[matchId].winnerSide = side;
+
+            // نسخ بيانات اللاعبين إذا كانت موجودة
+            if (currentPlayers[matchId]) {
+                if (currentPlayers[matchId].left) {
+                    tournamentData[matchId].left = {
+                        name: currentPlayers[matchId].left.name,
+                        img: currentPlayers[matchId].left.img,
+                        m1: currentPlayers[matchId].left.m1,
+                        m2: currentPlayers[matchId].left.m2,
+                        m3: currentPlayers[matchId].left.m3
+                    };
+                }
+                if (currentPlayers[matchId].right) {
+                    tournamentData[matchId].right = {
+                        name: currentPlayers[matchId].right.name,
+                        img: currentPlayers[matchId].right.img,
+                        m1: currentPlayers[matchId].right.m1,
+                        m2: currentPlayers[matchId].right.m2,
+                        m3: currentPlayers[matchId].right.m3
+                    };
+                }
+            }
+
+            const next = branching[matchId];
+            if (next && currentPlayers[matchId]) {
+                updateSlot(next.n, next.s, currentPlayers[matchId][side], true);
+            }
+
+            if (isAdmin && shouldSync) saveTournamentToGithub();
+        }
+
+        function updateSlot(matchId, side, data, shouldSave = true) {
+            const el = document.getElementById(matchId);
+            if(!el) return;
+            const col = el.querySelector('.' + side);
+
+            // تحديث الصورة الرئيسية
+            const bannerImg = col.querySelector('.banner img');
+            if (bannerImg) {
+                bannerImg.src = data.img || '';
+                bannerImg.style.visibility = data.img ? 'visible' : 'hidden';
+            } else {
+                col.querySelector('.banner').innerHTML = `<img src="${data.img || ''}" class="hero-img" style="visibility:${data.img ? 'visible' : 'hidden'}">`;
+            }
+
+            // تحديث الاسم
+            const nameTag = col.querySelector('.name-tag');
+            nameTag.innerText = data.name || '';
+            if(data.name && data.name !== "") nameTag.style.display = "block";
+
+            // تحديث الصور المصغرة
+            const imgs = col.querySelectorAll('.mini-group img');
+            if(imgs.length === 3 && data.m1 && data.m2 && data.m3) {
+                imgs[0].src = data.m1;
+                imgs[1].src = data.m2;
+                imgs[2].src = data.m3;
+                imgs.forEach(i => i.style.visibility = 'visible');
+            }
+
+            // حفظ البيانات
+            if(!currentPlayers[matchId]) currentPlayers[matchId] = {};
+            currentPlayers[matchId][side] = {
+                name: data.name || '',
+                img: data.img || '',
+                m1: data.m1 || '',
+                m2: data.m2 || '',
+                m3: data.m3 || ''
+            };
+
+            // تحديث tournamentData
+            if (!tournamentData[matchId]) tournamentData[matchId] = {};
+            tournamentData[matchId][side] = {
+                name: data.name || '',
+                img: data.img || '',
+                m1: data.m1 || '',
+                m2: data.m2 || '',
+                m3: data.m3 || ''
+            };
+
+            // الحفظ إذا طلب
+            if (shouldSave && isAdmin) saveTournamentToGithub();
+        }
+
+        // --- أدوات المسؤول ---
+        function handleSecret() {
+            window.clicks = (window.clicks || 0) + 1;
+            setTimeout(() => window.clicks = 0, 500);
+            if (window.clicks === 3) {
+                if (prompt("أدخل كلمة مرور المسؤول:") === CONFIG.ADMIN_PASSWORD) {
+                    const token = prompt("أدخل GitHub Token للحفظ:");
+                    if (token) {
+                        GITHUB_TOKEN = token;
+                        isAdmin = true;
+                        document.body.style.outline = "5px solid gold";
+                        document.getElementById('resetBtn').style.display = 'block';
+                        alert("✅ تم تفعيل وضع المسؤول\n\n🎮 الأوامر:\n• Y - تفعيل/تعطيل وضع تعديل الصور\n• انقر على أي قالب في وضع التعديل لتغيير صوره");
+                    }
+                }
+            }
+        }
+
+        // --- نظام تعديل الصور المصغرة ---
+        function toggleEditMode() {
+            if (!isAdmin) return;
+
+            editMode = !editMode;
+            const indicator = document.getElementById('editModeIndicator');
+
+            if (editMode) {
+                indicator.style.display = 'block';
+                document.body.classList.add('edit-mode-active');
+                alert("🖼️ وضع تعديل الصور مفعل!\n\nانقر على أي قالب لتغيير الصور المصغرة (3 صور)");
+            } else {
+                indicator.style.display = 'none';
+                document.body.classList.remove('edit-mode-active');
+                alert("وضع تعديل الصور معطل");
+            }
+        }
+
+        async function handleImageEdit(matchId, side) {
+            if (!isAdmin || !editMode) return;
+
+            const el = document.getElementById(matchId);
+            if (!el) return;
+
+            const col = el.querySelector('.' + side);
+            const nameTag = col.querySelector('.name-tag');
+            const playerName = nameTag.innerText;
+
+            if (!playerName || playerName === '') {
+                alert("⚠️ يجب أن يكون هناك لاعب محدد أولاً!");
+                return;
+            }
+
+            const confirmEdit = confirm(`هل تريد تغيير الصور المصغرة للاعب:\n"${playerName}"\n\nفي القالب: ${matchId} (${side})؟`);
+            if (!confirmEdit) return;
+
+            // الحصول على الروابط الحالية
+            const currentData = currentPlayers[matchId]?.[side] || {};
+
+            // طلب الروابط الثلاثة
+            const mini1 = prompt("أدخل رابط الصورة المصغرة الأولى:", currentData.m1 || "https://i.ibb.co/...");
+            if (!mini1) return;
+
+            const mini2 = prompt("أدخل رابط الصورة المصغرة الثانية:", currentData.m2 || "https://i.ibb.co/...");
+            if (!mini2) return;
+
+            const mini3 = prompt("أدخل رابط الصورة المصغرة الثالثة:", currentData.m3 || "https://i.ibb.co/...");
+            if (!mini3) return;
+
+            // تحديث الصور مباشرة
+            const imgs = col.querySelectorAll('.mini-group img');
+            if (imgs.length === 3) {
+                imgs[0].src = mini1;
+                imgs[1].src = mini2;
+                imgs[2].src = mini3;
+                imgs.forEach(img => img.style.visibility = 'visible');
+            }
+
+            // تحديث البيانات
+            if (!currentPlayers[matchId]) currentPlayers[matchId] = {};
+            if (!currentPlayers[matchId][side]) {
+                currentPlayers[matchId][side] = {
+                    name: playerName,
+                    img: currentData.img || ''
+                };
+            }
+
+            currentPlayers[matchId][side].m1 = mini1;
+            currentPlayers[matchId][side].m2 = mini2;
+            currentPlayers[matchId][side].m3 = mini3;
+
+            // تحديث tournamentData
+            if (!tournamentData[matchId]) tournamentData[matchId] = {};
+            tournamentData[matchId][side] = {
+                name: playerName,
+                img: currentPlayers[matchId][side].img,
+                m1: mini1,
+                m2: mini2,
+                m3: mini3
+            };
+
+            // حفظ التغييرات على GitHub
+            await saveTournamentToGithub();
+
+            alert("✅ تم تغيير الصور المصغرة بنجاح!\n\n📡 تم حفظ التغييرات على السيرفر، وسيظهر التغيير لجميع الزوار.");
+        }
+
+        // --- بناء الصفحة ---
+        function createLayout() {
+            const markup = (id) => {
+                // تحديد النص واللون المناسب لكل قالب
+                let labelHtml = '';
+                if (['p9','p10','p11','p12'].includes(id)) {
+                    labelHtml = '<div class="part-label part-8-label">part 8</div>';
+                } else if (['p13','p14'].includes(id)) {
+                    labelHtml = '<div class="part-label part-4-label">part 4</div>';
+                } else if (id === 'p15') {
+                    labelHtml = '<div class="part-label final-label">final</div>';
+                }
+
+                return `<div class="template" id="${id}">
+                    ${labelHtml}
+                    <div class="battle-arena">
+                    <div class="player-col left" onclick="handlePlayerClick('${id}', 'left')"><div class="mini-group"><img><img><img></div><div class="banner"></div><div class="name-tag" style="color:#6da3ff"></div></div>
+                    <div class="vs-text">VS</div>
+                    <div class="player-col right" onclick="handlePlayerClick('${id}', 'right')"><div class="mini-group"><img><img><img></div><div class="banner"></div><div class="name-tag" style="color:#ff7676"></div></div>
+                </div></div>`;
+            };
+            const cols = [document.getElementById('col1'), document.getElementById('col2'), document.getElementById('col3'), document.getElementById('col4')];
+            for(let i=1; i<=8; i++) cols[0].innerHTML += markup('p'+i);
+            for(let i=9; i<=12; i++) cols[1].innerHTML += markup('p'+i);
+            for(let i=13; i<=14; i++) cols[2].innerHTML += markup('p'+i);
+            cols[3].innerHTML = markup('p15');
+        }
+
+        // --- دالة التعامل مع النقر على اللاعب ---
+        function handlePlayerClick(matchId, side) {
+            if (!isAdmin) return;
+
+            if (editMode) {
+                handleImageEdit(matchId, side);
+            } else {
+                selectWinner(matchId, side);
+            }
+        }
+
+        createLayout();
+
+        // --- حقن البيانات التي طلبتها في p1 - p8 ---
+        matchesData.forEach(match => {
+            updateSlot(match.id, 'left', {
+                name: match.left.name,
+                img: match.left.bannerImg,
+                m1: match.left.mini1,
+                m2: match.left.mini2,
+                m3: match.left.mini3
+            }, false);
+
+            updateSlot(match.id, 'right', {
+                name: match.right.name,
+                img: match.right.bannerImg,
+                m1: match.right.mini1,
+                m2: match.right.mini2,
+                m3: match.right.mini3
+            }, false);
+        });
+
+        // --- إضافة مستمع لوحة المفاتيح للضغط على Y ---
+        document.addEventListener('keydown', function(e) {
+            if ((e.key === 'y' || e.key === 'Y') && isAdmin) {
+                toggleEditMode();
+            }
+        });
+
+        // بدء المزامنة والشرر
+        loadTournamentFromGithub();
+
+        setInterval(() => {
+            const s = document.createElement('div');
+            s.className = 'spark ' + (Math.random() > 0.5 ? 'fire-spark' : 'water-spark');
+            s.style.left = Math.random() * 100 + 'vw';
+            s.style.top = (Math.random() * 50 + 50) + 'vh';
+            s.style.animationDuration = (Math.random() * 5 + 7) + 's';
+            document.getElementById('sparks').appendChild(s);
+            setTimeout(() => s.remove(), 12000);
+        }, 800);
+
+                let lastScrollPos = 0;
+        const targetNav = document.getElementById('smartNav');
+
+        window.addEventListener('scroll', () => {
+            const currentPos = window.pageYOffset || document.documentElement.scrollTop;
+
+            // يختفي بمجرد النزول أكثر من 5 بكسل ليكون حساساً جداً
+            if (currentPos > 5) {
+                targetNav.classList.add('nav-hidden');
+            } else {
+                targetNav.classList.remove('nav-hidden');
+            }
+            lastScrollPos = currentPos;
+        });
+
+    </script>
+</body>
+</html>
